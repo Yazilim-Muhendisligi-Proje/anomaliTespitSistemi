@@ -1,2 +1,3 @@
 # anomaliTespitSistemi
-#Team
+#Team Hazır
+İkinci adıma geçebiliriz
