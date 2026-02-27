@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS · IT NETWORK DEEP DIVE · ANALYTICS</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <!-- Three.js -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #03050A;
+            color: #fff;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Premium noise texture */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJmIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBudW1PY3RhdmVzPSIzIiAvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNmKSIgb3BhY2l0eT0iMC4wMjUiIC8+PC9zdmc+');
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Grid overlay */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(31, 199, 98, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(31, 199, 98, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* Glass morphism premium */
+        .glass-premium {
+            background: rgba(10, 20, 35, 0.4);
+            backdrop-filter: blur(20px) saturate(200%);
+            -webkit-backdrop-filter: blur(20px) saturate(200%);
+            border: 1px solid rgba(31, 199, 98, 0.2);
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 
+                        0 0 0 1px rgba(31, 199, 98, 0.15) inset,
+                        0 0 40px rgba(31, 199, 98, 0.1);
+        }
+
+        .glass-premium-light {
+            background: rgba(20, 30, 45, 0.25);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+        }
+
+        /* IT Node (Primary) */
+        .node-it-primary {
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle at 30% 30%, #4ade80, #0a8a40);
+            box-shadow: 0 0 80px #1fc762, 0 0 150px rgba(31, 199, 98, 0.5), 0 0 200px rgba(31, 199, 98, 0.2);
+            left: calc(50% - 90px);
+            top: calc(50% - 90px);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            z-index: 50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            animation: itPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes itPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .node-it-primary::before {
+            content: "";
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(31,199,98,0.3) 0%, transparent 70%);
+            z-index: -1;
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        /* Metric nodes */
+        .metric-node {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            z-index: 40;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            background: rgba(10, 20, 35, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+        }
+
+        .metric-node:hover {
+            transform: scale(1.25) translateY(-10px);
+            z-index: 100;
+            border-color: rgba(31, 199, 98, 0.7);
+            box-shadow: 0 30px 50px -15px rgba(31, 199, 98, 0.4);
+        }
+
+        .metric-node.normal { box-shadow: 0 0 40px rgba(34, 197, 94, 0.5), 0 20px 40px -15px rgba(0, 0, 0, 0.6); }
+        .metric-node.warning { box-shadow: 0 0 50px rgba(250, 204, 21, 0.6), 0 20px 40px -15px rgba(0, 0, 0, 0.6); animation: warningPulse 2.5s ease-in-out infinite; }
+        .metric-node.critical { box-shadow: 0 0 60px rgba(239, 68, 68, 0.8), 0 20px 40px -15px rgba(0, 0, 0, 0.6); animation: criticalPulse 1s ease-in-out infinite; }
+
+        @keyframes warningPulse {
+            0%, 100% { box-shadow: 0 0 50px rgba(250, 204, 21, 0.6); transform: scale(1); }
+            50% { box-shadow: 0 0 80px rgba(250, 204, 21, 0.9); transform: scale(1.03); }
+        }
+
+        @keyframes criticalPulse {
+            0%, 100% { box-shadow: 0 0 60px rgba(239, 68, 68, 0.8); opacity: 1; }
+            50% { box-shadow: 0 0 100px rgba(239, 68, 68, 1); opacity: 0.95; transform: scale(1.02); }
+        }
+
+        /* Connection lines */
+        .connection-line {
+            position: absolute;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #1fc762, #1fc762, #1fc762, transparent);
+            transform-origin: left center;
+            pointer-events: none;
+            z-index: 20;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            filter: drop-shadow(0 0 12px #1fc762) blur(0.5px);
+            border-radius: 3px;
+        }
+
+        /* Tooltip premium */
+        .tooltip-premium {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-15px);
+            background: rgba(8, 18, 28, 0.98);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(31, 199, 98, 0.4);
+            border-radius: 20px;
+            padding: 16px 20px;
+            min-width: 260px;
+            box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.9);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .metric-node:hover .tooltip-premium {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-25px);
+        }
+
+        /* Orbital rings */
+        .orbital-ring-extra {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 750px;
+            height: 750px;
+            border: 1px solid rgba(31, 199, 98, 0.1);
+            border-radius: 50%;
+            animation: rotateSlow 70s linear infinite reverse;
+            z-index: 8;
+        }
+
+        .orbital-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 650px;
+            height: 650px;
+            border: 2px solid rgba(31, 199, 98, 0.15);
+            border-radius: 50%;
+            animation: rotateSlow 50s linear infinite;
+            z-index: 10;
+            box-shadow: 0 0 30px rgba(31, 199, 98, 0.1);
+        }
+
+        .orbital-ring-inner {
+            width: 550px;
+            height: 550px;
+            border: 2px dashed rgba(31, 199, 98, 0.2);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: rotateReverse 35s linear infinite;
+            box-shadow: 0 0 20px rgba(31, 199, 98, 0.1);
+        }
+
+        @keyframes rotateSlow {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes rotateReverse {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(-360deg); }
+        }
+
+        /* Data particles */
+        .data-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #1fc762;
+            border-radius: 50%;
+            filter: blur(1.5px);
+            animation: flowParticle 5s linear infinite;
+            pointer-events: none;
+            z-index: 12;
+            box-shadow: 0 0 15px #1fc762;
+        }
+
+        @keyframes flowParticle {
+            0% { opacity: 0; transform: translate(0, 0) scale(1); }
+            10% { opacity: 1; transform: translate(40px, 40px) scale(2); }
+            90% { opacity: 1; }
+            100% { opacity: 0; transform: translate(150px, 150px) scale(0.8); }
+        }
+
+        /* Canvas for particles */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Main container with scroll */
+        .main-container {
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            position: relative;
+            z-index: 50;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .main-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Top section (network graph) */
+        .top-section {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Bottom section (charts) */
+        .bottom-section {
+            min-height: 100vh;
+            padding: 40px 30px;
+            position: relative;
+            z-index: 100;
+        }
+
+        /* Chart containers */
+        .chart-card {
+            background: rgba(10, 20, 35, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(31, 199, 98, 0.15);
+            border-radius: 24px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            height: 100%;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+        }
+
+        .chart-card:hover {
+            border-color: rgba(31, 199, 98, 0.4);
+            box-shadow: 0 30px 50px -20px rgba(31, 199, 98, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-subtitle {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 12px;
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 200;
+            background: rgba(10, 20, 35, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(31, 199, 98, 0.3);
+            border-radius: 40px;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            animation: bounce 2s infinite;
+            color: white;
+            font-size: 14px;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        /* Back button */
+        .back-button {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 1000;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(10, 20, 35, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(31, 199, 98, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(31, 199, 98, 0.2);
+        }
+
+        .back-button:hover {
+            transform: scale(1.15);
+            border-color: rgba(31, 199, 98, 1);
+            box-shadow: 0 0 40px rgba(31, 199, 98, 0.5);
+        }
+
+        /* Info panel */
+        .info-panel {
+            position: fixed;
+            right: 35px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 340px;
+            z-index: 200;
+            opacity: 0;
+            animation: slideIn 0.7s ease forwards 0.4s;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-50%) translateX(60px); }
+            to { opacity: 1; transform: translateY(-50%) translateX(0); }
+        }
+
+        .metric-indicator {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .metric-indicator:hover {
+            background: rgba(31, 199, 98, 0.08);
+            border-color: rgba(31, 199, 98, 0.3);
+            transform: translateX(-5px);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .progress-fill::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* D3 chart customization */
+        .axis path, .axis line {
+            stroke: rgba(148, 163, 184, 0.2);
+        }
+
+        .axis text {
+            fill: #94a3b8;
+            font-size: 10px;
+        }
+
+        .line-chart {
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+
+        .area-chart {
+            opacity: 0.3;
+        }
+
+        .tooltip-chart {
+            position: absolute;
+            background: rgba(10, 20, 35, 0.95);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(31, 199, 98, 0.3);
+            border-radius: 12px;
+            padding: 8px 12px;
+            color: white;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: 0 10px 20px -10px rgba(0,0,0,0.5);
+        }
+
+        /* Time indicator */
+        .time-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 20, 35, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(31, 199, 98, 0.3);
+            border-radius: 50px;
+            padding: 12px 30px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            z-index: 200;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Chart grid layout */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .charts-grid-wide {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Particle Canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Grid Overlay -->
+    <div class="grid-overlay"></div>
+
+    <!-- Back Button -->
+    <div class="back-button" onclick="window.location.href='#'" id="backBtn">
+        <i class="fas fa-arrow-left text-brand text-2xl"></i>
+    </div>
+
+    <!-- Top Navigation (fixed) -->
+    <div class="fixed top-6 left-1/2 transform -translate-x-1/2 z-200">
+        <div class="glass-premium px-10 py-4 flex items-center gap-10">
+            <div class="flex items-center gap-4">
+                <div class="w-3 h-3 rounded-full bg-green-400 animate-pulse"></div>
+                <span class="text-base font-semibold text-white tracking-wider">IT NETWORK DEEP DIVE</span>
+            </div>
+            <div class="h-5 w-px bg-white/20"></div>
+            <div class="flex items-center gap-3">
+                <i class="fas fa-shield-alt text-brand text-sm"></i>
+                <span class="text-sm text-slate-300">Quantum Shield · Active</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Info Panel (fixed) -->
+    <div class="info-panel">
+        <div class="glass-premium p-7">
+            <h2 class="text-xl font-bold text-white mb-1 flex items-center gap-2">
+                <i class="fas fa-network-wired text-brand"></i>
+                IT Network Overview
+            </h2>
+            <p class="text-sm text-slate-400 mb-5">Real-time infrastructure metrics</p>
+
+            <!-- Overall Health Score -->
+            <div class="mb-5 p-5 bg-white/5 rounded-xl border border-white/10">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-sm text-slate-300">Overall Health</span>
+                    <span class="text-2xl font-bold text-yellow-400">74%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill bg-yellow-400" style="width: 74%;"></div>
+                </div>
+            </div>
+
+            <!-- Metrics List -->
+            <div class="space-y-3">
+                <div class="metric-indicator">
+                    <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
+                        <i class="fas fa-microchip text-red-400"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-white">CPU Usage</span>
+                            <span class="text-sm font-bold text-red-400">87%</span>
+                        </div>
+                        <div class="flex items-center gap-3 mt-1">
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-300">Critical</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-indicator">
+                    <div class="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                        <i class="fas fa-memory text-yellow-400"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-white">RAM Usage</span>
+                            <span class="text-sm font-bold text-yellow-400">74%</span>
+                        </div>
+                        <div class="flex items-center gap-3 mt-1">
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-300">Warning</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-indicator">
+                    <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
+                        <i class="fas fa-times-circle text-red-400"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-white">Packet Loss</span>
+                            <span class="text-sm font-bold text-red-400">12.4%</span>
+                        </div>
+                        <div class="flex items-center gap-3 mt-1">
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-300">Critical</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GNN Analysis -->
+            <div class="mt-5 p-4 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-xl border border-purple-500/20">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+                        <i class="fas fa-brain text-purple-400"></i>
+                    </div>
+                    <div>
+                        <span class="text-sm font-semibold text-white">GNN Root Cause Analysis</span>
+                    </div>
+                </div>
+                <div class="text-xs text-slate-300 mb-3">Primary anomaly: CPU cluster</div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs px-3 py-1.5 rounded-full bg-purple-500/30 text-purple-300">SHAP: 0.87</span>
+                    <span class="text-xs px-3 py-1.5 rounded-full bg-blue-500/30 text-blue-300">LIME: 0.92</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main scrollable container -->
+    <div class="main-container" id="main-container">
+
+        <!-- TOP SECTION: Network Graph -->
+        <div class="top-section" id="top-section">
+            
+            <!-- Orbital rings -->
+            <div class="orbital-ring-extra"></div>
+            <div class="orbital-ring"></div>
+            <div class="orbital-ring-inner"></div>
+            
+            <!-- IT Primary Node -->
+            <div class="node-it-primary" id="it-primary">
+                <div class="text-center">
+                    <div class="text-sm font-extrabold text-white tracking-wider mb-1">IT NETWORK</div>
+                    <div class="text-xs font-medium text-white/70">PRIMARY HUB</div>
+                </div>
+                <div class="absolute -top-3 -right-3 w-5 h-5 bg-green-400 rounded-full border-2 border-white/40 animate-pulse"></div>
+            </div>
+
+            <!-- Metric Nodes - 72° açı ile -->
+            <div class="metric-node critical" id="metric-cpu" style="left: calc(50% - 50px + 220px * 0.809); top: calc(50% - 50px + 220px * 0.588);">
+                <i class="fas fa-microchip text-2xl text-red-400 mb-1"></i>
+                <span class="text-sm font-bold text-white">CPU</span>
+                <span class="text-xs text-red-400">87%</span>
+            </div>
+
+            <div class="metric-node warning" id="metric-ram" style="left: calc(50% - 50px + 220px * -0.309); top: calc(50% - 50px + 220px * 0.951);">
+                <i class="fas fa-memory text-2xl text-yellow-400 mb-1"></i>
+                <span class="text-sm font-bold text-white">RAM</span>
+                <span class="text-xs text-yellow-400">74%</span>
+            </div>
+
+            <div class="metric-node critical" id="metric-packet" style="left: calc(50% - 50px + 220px * -1); top: calc(50% - 50px + 220px * 0);">
+                <i class="fas fa-times-circle text-2xl text-red-400 mb-1"></i>
+                <span class="text-sm font-bold text-white">PACKET</span>
+                <span class="text-xs text-red-400">12%</span>
+            </div>
+
+            <div class="metric-node normal" id="metric-users" style="left: calc(50% - 50px + 220px * -0.309); top: calc(50% - 50px + 220px * -0.951);">
+                <i class="fas fa-users text-2xl text-green-400 mb-1"></i>
+                <span class="text-sm font-bold text-white">USERS</span>
+                <span class="text-xs text-green-400">1.2k</span>
+            </div>
+
+            <div class="metric-node warning" id="metric-bandwidth" style="left: calc(50% - 50px + 220px * 0.809); top: calc(50% - 50px + 220px * -0.588);">
+                <i class="fas fa-wifi text-2xl text-yellow-400 mb-1"></i>
+                <span class="text-sm font-bold text-white">BAND</span>
+                <span class="text-xs text-yellow-400">89%</span>
+            </div>
+
+            <!-- Connection lines container -->
+            <div id="connection-lines"></div>
+            <div id="particle-container" class="absolute inset-0 pointer-events-none" style="z-index: 25;"></div>
+
+            <!-- Scroll Indicator -->
+            <div class="scroll-indicator" onclick="document.getElementById('main-container').scrollTo({top: window.innerHeight, behavior: 'smooth'})">
+                <i class="fas fa-chart-line text-brand"></i>
+                <span>View Detailed Analytics</span>
+                <i class="fas fa-chevron-down text-brand"></i>
+            </div>
+        </div>
+
+        <!-- BOTTOM SECTION: Charts -->
+        <div class="bottom-section">
+            <!-- Section Title -->
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-1 h-12 bg-brand rounded-full"></div>
+                <div>
+                    <h1 class="text-3xl font-bold text-white">Network Analytics Dashboard</h1>
+                    <p class="text-sm text-slate-400 mt-1">Real-time performance metrics · Last 24 hours</p>
+                </div>
+                <div class="flex-1"></div>
+                <div class="glass-premium-light px-4 py-2 flex items-center gap-2">
+                    <i class="fas fa-sync-alt text-brand text-sm"></i>
+                    <span class="text-sm text-white">Live</span>
+                    <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse ml-2"></div>
+                </div>
+            </div>
+
+            <!-- Row 1: 3 Charts -->
+            <div class="charts-grid">
+                <!-- CPU Trend Chart -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-microchip text-red-400"></i>
+                        CPU Usage Trend
+                        <span class="text-xs bg-red-500/20 text-red-300 px-2 py-1 rounded-full ml-auto">Critical</span>
+                    </div>
+                    <div class="chart-subtitle">Last 24 hours · Avg 78% · Peak 94%</div>
+                    <div id="chart-cpu" style="width: 100%; height: 180px;"></div>
+                </div>
+
+                <!-- RAM Usage Chart -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-memory text-yellow-400"></i>
+                        RAM Usage Trend
+                        <span class="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full ml-auto">Warning</span>
+                    </div>
+                    <div class="chart-subtitle">Last 24 hours · Avg 68% · Peak 82%</div>
+                    <div id="chart-ram" style="width: 100%; height: 180px;"></div>
+                </div>
+
+                <!-- Packet Loss Chart -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-times-circle text-red-400"></i>
+                        Packet Loss Rate
+                        <span class="text-xs bg-red-500/20 text-red-300 px-2 py-1 rounded-full ml-auto">Critical</span>
+                    </div>
+                    <div class="chart-subtitle">Last 24 hours · Avg 3.2% · Peak 12.4%</div>
+                    <div id="chart-packet" style="width: 100%; height: 180px;"></div>
+                </div>
+            </div>
+
+            <!-- Row 2: 3 Charts -->
+            <div class="charts-grid">
+                <!-- Bandwidth Usage -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-wifi text-yellow-400"></i>
+                        Bandwidth Utilization
+                        <span class="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full ml-auto">Warning</span>
+                    </div>
+                    <div class="chart-subtitle">Inbound vs Outbound · 1 Gbps link</div>
+                    <div id="chart-bandwidth" style="width: 100%; height: 180px;"></div>
+                </div>
+
+                <!-- Active Users -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-users text-green-400"></i>
+                        Active Users
+                        <span class="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded-full ml-auto">Normal</span>
+                    </div>
+                    <div class="chart-subtitle">Concurrent sessions · Peak 2,847</div>
+                    <div id="chart-users" style="width: 100%; height: 180px;"></div>
+                </div>
+
+                <!-- Network Latency (RTT) -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-clock text-blue-400"></i>
+                        Round Trip Time (RTT)
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full ml-auto">Stable</span>
+                    </div>
+                    <div class="chart-subtitle">Average 24ms · 95th percentile 42ms</div>
+                    <div id="chart-rtt" style="width: 100%; height: 180px;"></div>
+                </div>
+            </div>
+
+            <!-- Row 3: 2 Wide Charts -->
+            <div class="charts-grid-wide">
+                <!-- Traffic Distribution (Area Chart) -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-area text-purple-400"></i>
+                        Network Traffic Distribution
+                    </div>
+                    <div class="chart-subtitle">Protocol breakdown · Last 24 hours</div>
+                    <div id="chart-traffic" style="width: 100%; height: 220px;"></div>
+                </div>
+
+                <!-- Heatmap Style (Connection Count) -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-th text-orange-400"></i>
+                        Connection Density Heatmap
+                    </div>
+                    <div class="chart-subtitle">Hourly connection count · Last 7 days</div>
+                    <div id="chart-heatmap" style="width: 100%; height: 220px;"></div>
+                </div>
+            </div>
+
+            <!-- Row 4: 2 Wide Charts -->
+            <div class="charts-grid-wide mt-6">
+                <!-- TCP/UDP Distribution (Donut) -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-pie text-pink-400"></i>
+                        Protocol Distribution
+                    </div>
+                    <div class="chart-subtitle">TCP 68% · UDP 24% · ICMP 8%</div>
+                    <div id="chart-protocol" style="width: 100%; height: 200px;"></div>
+                </div>
+
+                <!-- Forecast Chart -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-line text-cyan-400"></i>
+                        Traffic Forecast
+                    </div>
+                    <div class="chart-subtitle">Next 2 hours prediction · +2h forecast</div>
+                    <div id="chart-forecast" style="width: 100%; height: 200px;"></div>
+                </div>
+            </div>
+
+            <!-- Last updated info -->
+            <div class="flex justify-between items-center mt-8 text-xs text-slate-500">
+                <span>Last updated: 15:24:07 UTC · Auto-refresh every 30s</span>
+                <span class="flex items-center gap-2">
+                    <i class="fas fa-circle text-green-400 text-[6px]"></i>
+                    Data stream active
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Indicator (fixed) -->
+    <div class="time-indicator">
+        <i class="fas fa-clock text-brand text-lg"></i>
+        <span class="text-base font-semibold text-white">15:24:07 UTC</span>
+        <div class="h-6 w-px bg-white/20"></div>
+        <div class="flex items-center gap-3">
+            <span class="text-sm text-slate-300">Live</span>
+            <div class="w-3 h-3 rounded-full bg-green-400 animate-pulse"></div>
+        </div>
+        <div class="h-6 w-px bg-white/20"></div>
+        <i class="fas fa-history text-slate-400 text-lg"></i>
+        <span class="text-sm text-slate-300">+2h forecast</span>
+    </div>
+
+    <script type="module">
+        // Three.js Particle System
+        import * as THREE from 'three';
+
+        const canvas = document.getElementById('particle-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 3000;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for (let i = 0; i < particlesCount * 3; i += 3) {
+            const radius = 30 + Math.random() * 20;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos((Math.random() * 2) - 1);
+            
+            posArray[i] = radius * Math.sin(phi) * Math.cos(theta);
+            posArray[i+1] = radius * Math.sin(phi) * Math.sin(theta) * 0.4;
+            posArray[i+2] = radius * Math.cos(phi);
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.15,
+            color: '#1fc762',
+            transparent: true,
+            opacity: 0.25,
+            blending: THREE.AdditiveBlending
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        camera.position.z = 32;
+        camera.position.y = 5;
+        camera.lookAt(0, 0, 0);
+
+        let mouseX = 0, mouseY = 0;
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX / window.innerWidth - 0.5) * 2;
+            mouseY = (event.clientY / window.innerHeight - 0.5) * 2;
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            particlesMesh.rotation.y += 0.0004;
+            particlesMesh.rotation.x += 0.00015;
+            particlesMesh.rotation.y += mouseX * 0.0004;
+            particlesMesh.rotation.x += mouseY * 0.0003;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Connection lines
+        function createConnectionLines() {
+            const container = document.getElementById('connection-lines');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            const itNode = document.getElementById('it-primary');
+            const metrics = ['metric-cpu', 'metric-ram', 'metric-packet', 'metric-users', 'metric-bandwidth'];
+            
+            const itRect = itNode.getBoundingClientRect();
+            const itCenter = { x: itRect.left + itRect.width / 2, y: itRect.top + itRect.height / 2 };
+            
+            metrics.forEach(id => {
+                const metric = document.getElementById(id);
+                if (!metric) return;
+                
+                const metricRect = metric.getBoundingClientRect();
+                const metricCenter = { x: metricRect.left + metricRect.width / 2, y: metricRect.top + metricRect.height / 2 };
+                
+                const line = document.createElement('div');
+                line.className = 'connection-line';
+                
+                const dx = metricCenter.x - itCenter.x;
+                const dy = metricCenter.y - itCenter.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                
+                line.style.width = distance + 'px';
+                line.style.left = itCenter.x + 'px';
+                line.style.top = itCenter.y + 'px';
+                line.style.transform = `rotate(${angle}deg)`;
+                
+                container.appendChild(line);
+            });
+        }
+
+        window.addEventListener('resize', () => setTimeout(createConnectionLines, 100));
+        setTimeout(createConnectionLines, 500);
+
+        // Data particles
+        function createDataParticles() {
+            const container = document.getElementById('particle-container');
+            if (!container) return;
+            
+            setInterval(() => {
+                for (let i = 0; i < 10; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        particle.className = 'data-particle';
+                        particle.style.left = (45 + Math.random() * 10) + '%';
+                        particle.style.top = (45 + Math.random() * 10) + '%';
+                        container.appendChild(particle);
+                        setTimeout(() => particle.remove(), 5000);
+                    }, i * 100);
+                }
+            }, 1500);
+        }
+        createDataParticles();
+
+        // Back button
+        document.getElementById('backBtn')?.addEventListener('click', () => {
+            window.location.href = '#';
+        });
+
+        // Generate sample data for charts
+        function generateTimeSeriesData(points = 24, min = 20, max = 80, volatility = 0.3) {
+            const data = [];
+            let value = (min + max) / 2;
+            for (let i = 0; i < points; i++) {
+                value += (Math.random() - 0.5) * volatility * (max - min);
+                value = Math.max(min, Math.min(max, value));
+                data.push({ time: i, value: Math.round(value * 10) / 10 });
+            }
+            return data;
+        }
+
+        // Draw line chart
+        function drawLineChart(containerId, data, color, area = false) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            const margin = { top: 10, right: 10, bottom: 20, left: 30 };
+
+            d3.select(container).selectAll("*").remove();
+
+            const svg = d3.select(container)
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .style("overflow", "visible");
+
+            const x = d3.scaleLinear()
+                .domain([0, data.length - 1])
+                .range([margin.left, width - margin.right]);
+
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d.value) * 1.1])
+                .range([height - margin.bottom, margin.top]);
+
+            // Grid lines
+            svg.append("g")
+                .attr("class", "grid")
+                .attr("transform", `translate(0,${height - margin.bottom})`)
+                .call(d3.axisBottom(x).ticks(6).tickSize(-(height - margin.top - margin.bottom)).tickFormat(""))
+                .style("color", "rgba(148,163,184,0.1)")
+                .style("stroke-dasharray", "3,3");
+
+            // Axis
+            svg.append("g")
+                .attr("transform", `translate(0,${height - margin.bottom})`)
+                .call(d3.axisBottom(x).ticks(6).tickFormat(d => `${d}:00`))
+                .style("color", "#94a3b8")
+                .style("font-size", "9px");
+
+            svg.append("g")
+                .attr("transform", `translate(${margin.left},0)`)
+                .call(d3.axisLeft(y).ticks(4).tickFormat(d => d + (containerId.includes('cpu') ? '%' : containerId.includes('packet') ? '%' : '')))
+                .style("color", "#94a3b8")
+                .style("font-size", "9px");
+
+            // Line
+            const line = d3.line()
+                .x(d => x(d.time))
+                .y(d => y(d.value))
+                .curve(d3.curveMonotoneX);
+
+            if (area) {
+                svg.append("path")
+                    .datum(data)
+                    .attr("fill", color)
+                    .attr("fill-opacity", 0.2)
+                    .attr("d", d3.area()
+                        .x(d => x(d.time))
+                        .y0(y(0))
+                        .y1(d => y(d.value))
+                        .curve(d3.curveMonotoneX)
+                    );
+            }
+
+            svg.append("path")
+                .datum(data)
+                .attr("fill", "none")
+                .attr("stroke", color)
+                .attr("stroke-width", 2.5)
+                .attr("stroke-linecap", "round")
+                .attr("d", line)
+                .attr("filter", "drop-shadow(0 0 6px " + color + ")");
+
+            // Data points
+            svg.selectAll("circle")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("cx", d => x(d.time))
+                .attr("cy", d => y(d.value))
+                .attr("r", 3)
+                .attr("fill", color)
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 1)
+                .attr("filter", "drop-shadow(0 0 4px " + color + ")");
+        }
+
+        // Draw donut chart
+        function drawDonutChart(containerId, data, colors) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            const radius = Math.min(width, height) / 2.5;
+
+            d3.select(container).selectAll("*").remove();
+
+            const svg = d3.select(container)
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", `translate(${width/2},${height/2})`);
+
+            const pie = d3.pie().value(d => d.value);
+            const arc = d3.arc().innerRadius(radius * 0.6).outerRadius(radius);
+
+            const arcs = svg.selectAll("arc")
+                .data(pie(data))
+                .enter()
+                .append("g");
+
+            arcs.append("path")
+                .attr("d", arc)
+                .attr("fill", d => colors[d.index])
+                .attr("stroke", "rgba(255,255,255,0.2)")
+                .attr("stroke-width", 1)
+                .attr("filter", "drop-shadow(0 0 8px currentColor)")
+                .style("transition", "all 0.3s")
+                .on("mouseenter", function() { d3.select(this).attr("transform", "scale(1.02)"); })
+                .on("mouseleave", function() { d3.select(this).attr("transform", "scale(1)"); });
+
+            // Legend inside
+            svg.append("text")
+                .attr("text-anchor", "middle")
+                .attr("dy", "0.3em")
+                .style("fill", "white")
+                .style("font-size", "14px")
+                .style("font-weight", "bold")
+                .text("Protocols");
+        }
+
+        // Draw heatmap (simplified)
+        function drawHeatmap(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            const cellSize = 20;
+
+            d3.select(container).selectAll("*").remove();
+
+            const svg = d3.select(container)
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+            for (let i = 0; i < 7; i++) {
+                for (let j = 0; j < 24; j++) {
+                    const value = Math.random();
+                    const color = d3.interpolateRgb("#1fc762", "#ef4444")(value);
+                    
+                    svg.append("rect")
+                        .attr("x", j * cellSize + 30)
+                        .attr("y", i * cellSize + 20)
+                        .attr("width", cellSize - 2)
+                        .attr("height", cellSize - 2)
+                        .attr("fill", color)
+                        .attr("rx", 4)
+                        .attr("ry", 4)
+                        .attr("opacity", 0.7)
+                        .attr("filter", "drop-shadow(0 0 4px " + color + ")");
+                }
+            }
+
+            // Day labels
+            const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+            days.forEach((day, i) => {
+                svg.append("text")
+                    .attr("x", 5)
+                    .attr("y", i * cellSize + 32)
+                    .style("fill", "#94a3b8")
+                    .style("font-size", "8px")
+                    .text(day);
+            });
+        }
+
+        // Initialize all charts after a short delay
+        setTimeout(() => {
+            // CPU Chart (red)
+            drawLineChart('chart-cpu', generateTimeSeriesData(24, 45, 94, 0.4), '#ef4444', true);
+            
+            // RAM Chart (yellow)
+            drawLineChart('chart-ram', generateTimeSeriesData(24, 40, 82, 0.3), '#facc15', true);
+            
+            // Packet Loss (red)
+            drawLineChart('chart-packet', generateTimeSeriesData(24, 0.5, 12.4, 0.5), '#ef4444');
+            
+            // Bandwidth (yellow) - stacked area
+            drawLineChart('chart-bandwidth', generateTimeSeriesData(24, 40, 89, 0.25), '#facc15', true);
+            
+            // Active Users (green)
+            drawLineChart('chart-users', generateTimeSeriesData(24, 800, 2100, 0.2), '#22c55e', true);
+            
+            // RTT (blue)
+            drawLineChart('chart-rtt', generateTimeSeriesData(24, 15, 42, 0.15), '#60a5fa', true);
+            
+            // Traffic Distribution
+            const trafficData = [
+                { time: i, value1: Math.random() * 60 + 20, value2: Math.random() * 40 + 10 }
+            ];
+            drawLineChart('chart-traffic', generateTimeSeriesData(24, 30, 95, 0.3), '#a78bfa', true);
+            
+            // Heatmap
+            drawHeatmap('chart-heatmap');
+            
+            // Protocol Distribution (Donut)
+            drawDonutChart('chart-protocol', [
+                { label: 'TCP', value: 68 },
+                { label: 'UDP', value: 24 },
+                { label: 'ICMP', value: 8 }
+            ], ['#3b82f6', '#a855f7', '#ec4899']);
+            
+            // Forecast Chart
+            drawLineChart('chart-forecast', generateTimeSeriesData(8, 45, 85, 0.2), '#06b6d4', true);
+            
+        }, 200);
+
+        // Update charts on resize
+        window.addEventListener('resize', () => {
+            setTimeout(() => {
+                // Redraw all charts (simplified - would need proper refresh)
+                location.reload(); // Quick solution for demo
+            }, 200);
+        });
+    </script>
+</body>
+</html>
