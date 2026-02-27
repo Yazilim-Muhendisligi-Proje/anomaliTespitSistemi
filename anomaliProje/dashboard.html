@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS INTELLIGENCE · Anomaly Detection</title>
+
+    <!-- Fonts & Icons -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind with custom config -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Three.js for advanced 3D -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #03050A;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+
+        /* Premium noise texture overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJmIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBudW1PY3RhdmVzPSIzIiAvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNmKSIgb3BhY2l0eT0iMC4wMjUiIC8+PC9zdmc+');
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Custom glass morphism */
+        .glass-premium {
+            background: rgba(10, 15, 25, 0.4);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(64, 224, 128, 0.15);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(64, 224, 128, 0.1) inset,
+                0 0 30px -10px rgba(64, 224, 128, 0.3);
+        }
+
+        .glass-premium-light {
+            background: rgba(20, 30, 45, 0.3);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+        }
+
+        /* Glowing text effect */
+        .text-glow {
+            text-shadow: 0 0 10px rgba(64, 224, 128, 0.5), 0 0 20px rgba(64, 224, 128, 0.3);
+        }
+
+        .text-glow-red {
+            text-shadow: 0 0 10px rgba(255, 68, 68, 0.5), 0 0 20px rgba(255, 68, 68, 0.3);
+        }
+
+        .text-glow-yellow {
+            text-shadow: 0 0 10px rgba(250, 204, 21, 0.5), 0 0 20px rgba(250, 204, 21, 0.3);
+        }
+
+        /* Animated gradient border */
+        .animated-border {
+            position: relative;
+            border: 1px solid transparent;
+            background: linear-gradient(45deg, #1fc762, #0a8a40, #1fc762) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: borderRotate 4s linear infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes borderRotate {
+            0% {
+                background-position: 0% 0%;
+            }
+
+            100% {
+                background-position: 200% 0%;
+            }
+        }
+
+        /* Pulse rings */
+        .pulse-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 1px solid rgba(64, 224, 128, 0.3);
+            animation: pulseRing 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulseRing {
+            0% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Orbital ring */
+        .orbital-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 380px;
+            height: 380px;
+            border: 1px dashed rgba(64, 224, 128, 0.2);
+            border-radius: 50%;
+            animation: rotate 60s linear infinite;
+        }
+
+        .orbital-ring-inner {
+            width: 280px;
+            height: 280px;
+            border: 1px solid rgba(64, 224, 128, 0.15);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: rotateReverse 40s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        @keyframes rotateReverse {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(-360deg);
+            }
+        }
+
+        /* Node styles */
+        .node {
+            position: absolute;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 20;
+            cursor: pointer;
+        }
+
+        .node:hover {
+            transform: scale(1.1);
+            filter: brightness(1.2);
+            z-index: 100;
+        }
+
+        .node-core {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle at 30% 30%, #4ade80, #0a8a40);
+            box-shadow: 0 0 50px #1fc762, 0 0 100px rgba(31, 199, 98, 0.3), 0 0 200px rgba(31, 199, 98, 0.1);
+            left: calc(50% - 60px);
+            top: calc(50% - 60px);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .node-core::after {
+            content: "";
+            position: absolute;
+            width: 140%;
+            height: 140%;
+            top: -20%;
+            left: -20%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(31, 199, 98, 0.2) 0%, transparent 70%);
+            z-index: -1;
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.1);
+            }
+        }
+
+        .node-satellite {
+            width: 75px;
+            height: 75px;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Data streams */
+        .data-stream {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #1fc762;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: flow 3s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes flow {
+            0% {
+                opacity: 0;
+                transform: translate(0, 0) scale(1);
+            }
+
+            10% {
+                opacity: 1;
+                transform: translate(10px, 10px) scale(1.5);
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(100px, 100px) scale(0.5);
+            }
+        }
+
+        /* Metric bars */
+        .metric-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .metric-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-fill::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* Canvas for particles */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Main content wrapper */
+        main {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Tooltip premium */
+        .tooltip-premium {
+            position: absolute;
+            background: rgba(10, 20, 30, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(31, 199, 98, 0.3);
+            border-radius: 16px;
+            padding: 12px 16px;
+            min-width: 200px;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(31, 199, 98, 0.2);
+            transition: all 0.2s ease;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Floating indicators */
+        .indicator {
+            position: absolute;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.6);
+            white-space: nowrap;
+        }
+
+        /* Custom scrollbar (hidden but functional) */
+        .scrollable {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .scrollable::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Particle Canvas (Three.js background) -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Top Navigation Bar -->
+    <div class="fixed top-6 left-6 right-6 z-50 flex justify-between items-start">
+        <div class="glass-premium px-6 py-3">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-8 h-8 rounded-full bg-gradient-to-br from-brand to-green-600 flex items-center justify-center">
+                    <i class="fas fa-brain text-white text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight text-white">NEXUS·AI</h1>
+                    <p class="text-[10px] text-brand uppercase tracking-[0.2em] font-medium">Anomaly Detection Engine
+                        v2.4</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-premium px-6 py-3 flex items-center gap-6">
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                    <span class="text-xs font-medium text-slate-300">Live</span>
+                </div>
+                <div class="h-4 w-px bg-white/10"></div>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-shield-alt text-brand text-xs"></i>
+                    <span class="text-xs font-medium text-slate-300">Quantum Secure</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="text-right">
+                    <span class="text-2xl font-bold text-white">92<span class="text-sm text-brand ml-1">%</span></span>
+                    <p class="text-[10px] text-slate-400">System Health</p>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                    <div class="w-6 h-6 rounded-full bg-green-400 animate-pulse"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Visualization Area -->
+    <div class="relative w-full h-full flex items-center justify-center" id="viz-container">
+
+        <!-- Orbital rings (decorative) -->
+        <div class="orbital-ring"></div>
+        <div class="orbital-ring-inner"></div>
+
+        <!-- Connection lines SVG -->
+        <svg class="absolute inset-0 w-full h-full pointer-events-none" style="z-index: 5;">
+            <defs>
+                <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#1fc762" stop-opacity="0.2" />
+                    <stop offset="50%" stop-color="#1fc762" stop-opacity="0.8" />
+                    <stop offset="100%" stop-color="#1fc762" stop-opacity="0.2" />
+                </linearGradient>
+                <filter id="glow">
+                    <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+                    <feMerge>
+                        <feMergeNode in="coloredBlur" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+            </defs>
+
+            <!-- Central to IT -->
+            <line x1="50%" y1="50%" x2="25%" y2="25%" stroke="url(#line-gradient)" stroke-width="1.5"
+                stroke-dasharray="4 4" filter="url(#glow)">
+                <animate attributeName="stroke-dashoffset" values="0;100" dur="10s" repeatCount="indefinite" />
+            </line>
+            <!-- Central to HR -->
+            <line x1="50%" y1="50%" x2="75%" y2="25%" stroke="url(#line-gradient)" stroke-width="1.5"
+                stroke-dasharray="4 4" filter="url(#glow)">
+                <animate attributeName="stroke-dashoffset" values="0;100" dur="10s" repeatCount="indefinite"
+                    begin="2s" />
+            </line>
+            <!-- Central to IoT -->
+            <line x1="50%" y1="50%" x2="25%" y2="75%" stroke="url(#line-gradient)" stroke-width="2"
+                stroke-dasharray="6 4" filter="url(#glow)" style="--tw-stroke-opacity: 0.8;">
+                <animate attributeName="stroke-dashoffset" values="0;100" dur="8s" repeatCount="indefinite"
+                    begin="1s" />
+            </line>
+            <!-- Central to Finance -->
+            <line x1="50%" y1="50%" x2="75%" y2="75%" stroke="url(#line-gradient)" stroke-width="1.5"
+                stroke-dasharray="4 4" filter="url(#glow)">
+                <animate attributeName="stroke-dashoffset" values="0;100" dur="10s" repeatCount="indefinite"
+                    begin="3s" />
+            </line>
+        </svg>
+
+        <!-- Floating data particles (animated) -->
+        <div class="absolute inset-0 pointer-events-none" id="particle-container"></div>
+
+        <!-- NODES -->
+
+        <!-- Central Server Node (Premium Core) -->
+        <div class="node node-core" id="central-node">
+            <div class="text-center">
+                <div class="text-[10px] font-extrabold text-white tracking-wider mb-1">PRIMARY</div>
+                <div class="text-[8px] font-medium text-white/60">HUB·01</div>
+            </div>
+            <div class="pulse-ring"></div>
+            <div class="absolute -bottom-20 left-1/2 transform -translate-x-1/2 glass-premium-light px-4 py-2 min-w-[180px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                style="display: none;" id="central-tooltip">
+                <!-- Tooltip content will be populated by JS -->
+            </div>
+        </div>
+
+        <!-- IT Node (Green - Stable) -->
+        <div class="node node-satellite"
+            style="background: radial-gradient(circle at 30% 30%, #4ade80, #16a34a); left: 18%; top: 18%; box-shadow: 0 0 30px rgba(74, 222, 128, 0.3);"
+            id="node-it">
+            <span class="text-xs font-bold text-white">IT</span>
+            <div class="absolute inset-0 rounded-full border-2 border-white/20"></div>
+            <!-- Mini metrics ring -->
+            <svg class="absolute -inset-3 w-[calc(100%+24px)] h-[calc(100%+24px)] -rotate-90">
+                <circle cx="50%" cy="50%" r="30" stroke="rgba(255,255,255,0.1)" stroke-width="2" fill="none" />
+                <circle cx="50%" cy="50%" r="30" stroke="#4ade80" stroke-width="2" fill="none" stroke-dasharray="188.4"
+                    stroke-dashoffset="37.68" stroke-linecap="round" />
+            </svg>
+        </div>
+
+        <!-- HR Node (Yellow - Warning) -->
+        <div class="node node-satellite animate-pulse"
+            style="background: radial-gradient(circle at 30% 30%, #facc15, #ca8a04); left: 72%; top: 18%; box-shadow: 0 0 30px rgba(250, 204, 21, 0.5);"
+            id="node-hr">
+            <span class="text-xs font-bold text-white">HR</span>
+            <div class="absolute inset-0 rounded-full border-2 border-yellow-300/40"></div>
+            <div class="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping"></div>
+        </div>
+
+        <!-- IoT Node (Red - Critical) -->
+        <div class="node node-satellite"
+            style="background: radial-gradient(circle at 30% 30%, #ef4444, #b91c1c); left: 18%; top: 72%; box-shadow: 0 0 40px rgba(239, 68, 68, 0.8); animation: pulse 1s ease-in-out infinite;"
+            id="node-iot">
+            <span class="text-xs font-bold text-white">IoT</span>
+            <div class="absolute inset-0 rounded-full border-2 border-red-400/60"></div>
+            <div class="absolute -inset-2 rounded-full border border-red-500/30 animate-ping"></div>
+            <div class="absolute -inset-4 rounded-full border border-red-500/10 animate-ping"
+                style="animation-delay: 0.3s;"></div>
+        </div>
+
+        <!-- Finance Node (Green - Stable) -->
+        <div class="node node-satellite"
+            style="background: radial-gradient(circle at 30% 30%, #4ade80, #16a34a); left: 72%; top: 72%; box-shadow: 0 0 30px rgba(74, 222, 128, 0.3);"
+            id="node-finance">
+            <span class="text-xs font-bold text-white">FIN</span>
+            <div class="absolute inset-0 rounded-full border-2 border-white/20"></div>
+            <svg class="absolute -inset-3 w-[calc(100%+24px)] h-[calc(100%+24px)] -rotate-90">
+                <circle cx="50%" cy="50%" r="30" stroke="rgba(255,255,255,0.1)" stroke-width="2" fill="none" />
+                <circle cx="50%" cy="50%" r="30" stroke="#4ade80" stroke-width="2" fill="none" stroke-dasharray="188.4"
+                    stroke-dashoffset="18.84" stroke-linecap="round" />
+            </svg>
+        </div>
+
+        <!-- Floating metric labels -->
+        <div class="indicator" style="left: 15%; top: 15%;">98% · 2ms</div>
+        <div class="indicator" style="left: 75%; top: 15%;">74% · 120ms</div>
+        <div class="indicator" style="left: 15%; top: 80%;">12% · 2000ms</div>
+        <div class="indicator" style="left: 75%; top: 80%;">100% · 1ms</div>
+    </div>
+
+    <!-- Bottom Dashboard -->
+    <div class="fixed bottom-6 left-6 right-6 z-50 grid grid-cols-4 gap-4">
+        <!-- Active Threats -->
+        <div class="glass-premium p-5">
+            <div class="flex items-center gap-2 mb-3">
+                <div class="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center">
+                    <i class="fas fa-exclamation-triangle text-red-400 text-sm"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-medium text-slate-400">ACTIVE THREATS</p>
+                    <p class="text-2xl font-bold text-white">03</p>
+                </div>
+            </div>
+            <div class="space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="text-slate-400">IoT · Packet Loss</span>
+                    <span class="text-red-400 font-medium">CRITICAL</span>
+                </div>
+                <div class="flex items-center justify-between text-xs">
+                    <span class="text-slate-400">HR · Latency Spike</span>
+                    <span class="text-yellow-400 font-medium">WARNING</span>
+                </div>
+                <div class="flex items-center justify-between text-xs">
+                    <span class="text-slate-400">Core · Memory Leak</span>
+                    <span class="text-yellow-400 font-medium">WARNING</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Network Load -->
+        <div class="glass-premium p-5">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-8 h-8 rounded-full bg-brand/20 flex items-center justify-center">
+                    <i class="fas fa-network-wired text-brand text-sm"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-medium text-slate-400">NETWORK LOAD</p>
+                    <p class="text-2xl font-bold text-white">42<span class="text-sm text-brand ml-1">%</span></p>
+                </div>
+            </div>
+            <div class="metric-bar mb-3">
+                <div class="metric-fill bg-brand" style="width: 42%;"></div>
+            </div>
+            <div class="flex justify-between text-[10px] text-slate-500">
+                <span>Ingress 2.4 Gbps</span>
+                <span>Egress 1.8 Gbps</span>
+            </div>
+        </div>
+
+        <!-- Root Cause Analysis (GNN Output) -->
+        <div class="glass-premium p-5 col-span-2">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+                        <i class="fas fa-project-diagram text-purple-400 text-sm"></i>
+                    </div>
+                    <p class="text-xs font-medium text-slate-400">GNN ROOT CAUSE ANALYSIS</p>
+                </div>
+                <span class="text-[10px] px-2 py-1 rounded-full bg-brand/20 text-brand border border-brand/30">LIME ·
+                    SHAP</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white/5 rounded-xl p-3 border border-white/5">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                        <span class="text-xs font-medium text-white">Primary Anomaly</span>
+                    </div>
+                    <p class="text-sm font-bold text-white mb-1">IoT Node · PDR Failure</p>
+                    <p class="text-[10px] text-slate-400">Confidence: 94%</p>
+                    <div class="mt-2 flex items-center gap-1">
+                        <span class="text-[8px] px-2 py-1 rounded-full bg-red-500/20 text-red-300">iot_pdr: 0.12</span>
+                        <span
+                            class="text-[8px] px-2 py-1 rounded-full bg-orange-500/20 text-orange-300">ingestion_delay:
+                            2s</span>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 rounded-xl p-3 border border-white/5">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
+                        <span class="text-xs font-medium text-white">Causal Chain</span>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex items-center text-[10px]">
+                            <span class="text-slate-400 w-16">hub_cpu</span>
+                            <div class="flex-1 h-1 bg-white/10 rounded-full mx-2">
+                                <div class="h-full bg-yellow-500 rounded-full" style="width: 87%;"></div>
+                            </div>
+                            <span class="text-white">87%</span>
+                        </div>
+                        <div class="flex items-center text-[10px]">
+                            <span class="text-slate-400 w-16">it_response</span>
+                            <div class="flex-1 h-1 bg-white/10 rounded-full mx-2">
+                                <div class="h-full bg-yellow-500 rounded-full" style="width: 64%;"></div>
+                            </div>
+                            <span class="text-white">64%</span>
+                        </div>
+                        <div class="flex items-center text-[10px]">
+                            <span class="text-slate-400 w-16">iot_pdr</span>
+                            <div class="flex-1 h-1 bg-white/10 rounded-full mx-2">
+                                <div class="h-full bg-red-500 rounded-full" style="width: 100%;"></div>
+                            </div>
+                            <span class="text-white">100%</span>
+                        </div>
+                    </div>
+                    <p class="text-[9px] text-slate-500 mt-2">SHAP value: 0.84 · hub_cpu primary driver</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Sidebar (Quick Actions) -->
+    <div class="fixed right-6 top-1/2 transform -translate-y-1/2 z-50 flex flex-col gap-3">
+        <div
+            class="glass-premium-light w-12 h-12 rounded-full flex items-center justify-center hover:bg-brand/20 transition cursor-pointer group">
+            <i class="fas fa-search text-slate-400 group-hover:text-brand"></i>
+        </div>
+        <div
+            class="glass-premium-light w-12 h-12 rounded-full flex items-center justify-center hover:bg-brand/20 transition cursor-pointer group">
+            <i class="fas fa-bell text-slate-400 group-hover:text-brand"></i>
+            <span
+                class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[8px] flex items-center justify-center font-bold">3</span>
+        </div>
+        <div
+            class="glass-premium-light w-12 h-12 rounded-full flex items-center justify-center hover:bg-brand/20 transition cursor-pointer group">
+            <i class="fas fa-cog text-slate-400 group-hover:text-brand"></i>
+        </div>
+        <div
+            class="glass-premium-light w-12 h-12 rounded-full flex items-center justify-center hover:bg-brand/20 transition cursor-pointer group">
+            <i class="fas fa-chart-line text-slate-400 group-hover:text-brand"></i>
+        </div>
+    </div>
+
+    <!-- Time scrubber (bottom center) -->
+    <div
+        class="fixed bottom-28 left-1/2 transform -translate-x-1/2 z-50 glass-premium px-6 py-3 flex items-center gap-4">
+        <i class="fas fa-history text-xs text-slate-400"></i>
+        <div class="flex gap-2">
+            <span class="text-xs font-medium text-brand">15:24:07</span>
+            <span class="text-xs text-slate-400">UTC</span>
+        </div>
+        <div class="w-40 h-1 bg-white/10 rounded-full">
+            <div class="w-3/4 h-full bg-brand rounded-full relative">
+                <div
+                    class="absolute right-0 top-1/2 transform translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full border-2 border-brand">
+                </div>
+            </div>
+        </div>
+        <span class="text-xs text-slate-400">+2h forecast</span>
+    </div>
+
+    <script type="module">
+        // Three.js Particle System
+        import * as THREE from 'three';
+
+        const canvas = document.getElementById('particle-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        // Create particles
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 2000;
+        const posArray = new Float32Array(particlesCount * 3);
+        const colorArray = new Float32Array(particlesCount * 3);
+
+        for (let i = 0; i < particlesCount * 3; i += 3) {
+            // Position in a sphere
+            const radius = 15 + Math.random() * 5;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos((Math.random() * 2) - 1);
+
+            posArray[i] = radius * Math.sin(phi) * Math.cos(theta);
+            posArray[i + 1] = radius * Math.sin(phi) * Math.sin(theta);
+            posArray[i + 2] = radius * Math.cos(phi);
+
+            // Color (greenish)
+            colorArray[i] = 0.2 + Math.random() * 0.3; // R
+            colorArray[i + 1] = 0.6 + Math.random() * 0.4; // G
+            colorArray[i + 2] = 0.2 + Math.random() * 0.3; // B
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.05,
+            vertexColors: true,
+            transparent: true,
+            blending: THREE.AdditiveBlending
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        camera.position.z = 20;
+
+        // Mouse interaction
+        let mouseX = 0;
+        let mouseY = 0;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX / window.innerWidth - 0.5) * 2;
+            mouseY = (event.clientY / window.innerHeight - 0.5) * 2;
+        });
+
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Rotate particles
+            particlesMesh.rotation.y += 0.0002;
+            particlesMesh.rotation.x += 0.0001;
+
+            // Subtle follow mouse
+            particlesMesh.rotation.y += mouseX * 0.0005;
+            particlesMesh.rotation.x += mouseY * 0.0005;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Interactive nodes - show tooltips with real data
+        const nodes = {
+            central: {
+                cpu: 87,
+                ram: 62,
+                disk: 43,
+                net: 78
+            },
+            it: {
+                bandwidth: 98,
+                latency: 2,
+                response: 23
+            },
+            hr: {
+                bandwidth: 74,
+                latency: 120,
+                response: 345
+            },
+            iot: {
+                temp: 68,
+                delay: 2000,
+                pdr: 12
+            },
+            finance: {
+                transactions: 100,
+                query: 1,
+                api: 5
+            }
+        };
+
+        // Add click handlers for nodes
+        document.querySelectorAll('.node').forEach(node => {
+            node.addEventListener('click', (e) => {
+                e.stopPropagation();
+
+                // Create ripple effect
+                const ripple = document.createElement('div');
+                ripple.className = 'absolute rounded-full bg-white/30 pointer-events-none';
+                ripple.style.width = '10px';
+                ripple.style.height = '10px';
+                ripple.style.left = '50%';
+                ripple.style.top = '50%';
+                ripple.style.transform = 'translate(-50%, -50%) scale(1)';
+                ripple.style.animation = 'none';
+                node.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.style.transition = 'all 0.6s ease-out';
+                    ripple.style.transform = 'translate(-50%, -50%) scale(10)';
+                    ripple.style.opacity = '0';
+                }, 10);
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+
+                // Show detailed tooltip (simplified for demo)
+                alert('Node selected: ' + (node.id || 'central'));
+            });
+        });
+
+        // Data stream particles
+        function createDataStream() {
+            const container = document.getElementById('particle-container');
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const stream = document.createElement('div');
+                    stream.className = 'data-stream';
+
+                    // Random start position along connections
+                    const startX = Math.random() * 100;
+                    const startY = Math.random() * 100;
+
+                    stream.style.left = startX + '%';
+                    stream.style.top = startY + '%';
+
+                    // Random direction
+                    const angle = Math.random() * Math.PI * 2;
+                    const dx = Math.cos(angle) * 50;
+                    const dy = Math.sin(angle) * 50;
+
+                    stream.style.setProperty('--dx', dx + 'px');
+                    stream.style.setProperty('--dy', dy + 'px');
+
+                    container.appendChild(stream);
+
+                    setTimeout(() => {
+                        stream.remove();
+                    }, 3000);
+                }, i * 100);
+            }
+
+            setTimeout(createDataStream, 3000);
+        }
+
+        createDataStream();
+
+        // Update metrics in real-time (simulated)
+        setInterval(() => {
+            // Update IoT metrics (make it blink more)
+            const iotNode = document.getElementById('node-iot');
+            if (Math.random() > 0.7) {
+                iotNode.style.boxShadow = '0 0 60px rgba(239, 68, 68, 0.9)';
+                iotNode.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    iotNode.style.boxShadow = '0 0 40px rgba(239, 68, 68, 0.8)';
+                    iotNode.style.transform = 'scale(1)';
+                }, 200);
+            }
+        }, 2000);
+    </script>
+</body>
+
+</html>
