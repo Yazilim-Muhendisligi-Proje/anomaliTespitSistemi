@@ -804,6 +804,14 @@
             }
         };
 
+        // Node Navigation Mapping
+        const nodeRoutes = {
+            'node-it': '/network',
+            'node-hr': '/ik',
+            'node-iot': '/iot',
+            'node-finance': '/finance'
+        };
+
         // Add click handlers for nodes
         document.querySelectorAll('.node').forEach(node => {
             node.addEventListener('click', (e) => {
@@ -828,62 +836,66 @@
 
                 setTimeout(() => {
                     ripple.remove();
-                }, 600);
-
-                // Show detailed tooltip (simplified for demo)
-                alert('Node selected: ' + (node.id || 'central'));
+                    if (nodeRoutes[node.id]) {
+                        window.location.href = nodeRoutes[node.id];
+                    }
+                }, 300);
             });
         });
 
-        // Data stream particles
-        function createDataStream() {
-            const container = document.getElementById('particle-container');
-            for (let i = 0; i < 30; i++) {
-                setTimeout(() => {
-                    const stream = document.createElement('div');
-                    stream.className = 'data-stream';
+        // WebSocket integration
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsURL = `${wsProtocol}//${window.location.host}/ws/stream`;
+        const socket = new WebSocket(wsURL);
 
-                    // Random start position along connections
-                    const startX = Math.random() * 100;
-                    const startY = Math.random() * 100;
+        function updateNodeUI(nodeId, status) {
+            const node = document.getElementById(nodeId);
+            if (!node) return;
 
-                    stream.style.left = startX + '%';
-                    stream.style.top = startY + '%';
+            // clear animations unless critical
+            node.classList.remove('animate-pulse');
 
-                    // Random direction
-                    const angle = Math.random() * Math.PI * 2;
-                    const dx = Math.cos(angle) * 50;
-                    const dy = Math.sin(angle) * 50;
-
-                    stream.style.setProperty('--dx', dx + 'px');
-                    stream.style.setProperty('--dy', dy + 'px');
-
-                    container.appendChild(stream);
-
-                    setTimeout(() => {
-                        stream.remove();
-                    }, 3000);
-                }, i * 100);
+            if (status === 'critical') {
+                node.style.background = 'radial-gradient(circle at 30% 30%, #ef4444, #b91c1c)';
+                node.style.boxShadow = '0 0 40px rgba(239, 68, 68, 0.8)';
+            } else if (status === 'warning') {
+                node.style.background = 'radial-gradient(circle at 30% 30%, #facc15, #ca8a04)';
+                node.style.boxShadow = '0 0 30px rgba(250, 204, 21, 0.5)';
+                node.classList.add('animate-pulse');
+            } else {
+                node.style.background = 'radial-gradient(circle at 30% 30%, #4ade80, #16a34a)';
+                node.style.boxShadow = '0 0 30px rgba(74, 222, 128, 0.3)';
             }
-
-            setTimeout(createDataStream, 3000);
         }
 
-        createDataStream();
+        socket.onmessage = function (event) {
+            const msg = JSON.parse(event.data);
+            if (msg.type === 'telemetry') {
+                // Determine node statuses based on alerts
+                let statuses = {
+                    'node-it': 'stable',
+                    'node-hr': 'stable',
+                    'node-iot': 'stable',
+                    'node-finance': 'stable',
+                    'central-node': 'stable' // Hub
+                };
 
-        // Update metrics in real-time (simulated)
-        setInterval(() => {
-            // Update IoT metrics (make it blink more)
-            const iotNode = document.getElementById('node-iot');
-            if (Math.random() > 0.7) {
-                iotNode.style.boxShadow = '0 0 60px rgba(239, 68, 68, 0.9)';
-                iotNode.style.transform = 'scale(1.05)';
-                setTimeout(() => {
-                    iotNode.style.boxShadow = '0 0 40px rgba(239, 68, 68, 0.8)';
-                    iotNode.style.transform = 'scale(1)';
-                }, 200);
+                msg.alerts.forEach(alert => {
+                    if (alert.dept === 'network') statuses['node-it'] = alert.severity;
+                    if (alert.dept === 'ik' || alert.dept === 'hr') statuses['node-hr'] = alert.severity;
+                    if (alert.dept === 'iot') statuses['node-iot'] = alert.severity;
+                    if (alert.dept === 'finance') statuses['node-finance'] = alert.severity;
+                    if (alert.dept === 'core') statuses['central-node'] = alert.severity;
+                });
+
+                Object.keys(statuses).forEach(id => {
+                    updateNodeUI(id, statuses[id]);
+                });
             }
-        }, 2000);
+        };
+
+        socket.onclose = () => { console.log("WebSocket connection closed") };
+
     </script>
 </body>
 

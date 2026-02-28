@@ -1531,12 +1531,47 @@
 
         }, 200);
 
+        // Arrays to hold real data
+        let realData_temp = generateTimeSeriesData(24, 65, 78, 0.2);
+        let realData_vib = generateTimeSeriesData(24, 1.8, 2.4, 0.15);
+        let realData_cycle = generateTimeSeriesData(24, 4.0, 4.2, 0.05);
+
         // Update charts on resize
         window.addEventListener('resize', () => {
-            setTimeout(() => {
-                location.reload();
-            }, 200);
+            // Graceful resize handler without reloading
         });
+
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const socket = new WebSocket(`${wsProtocol}//${window.location.host}/ws/stream`);
+
+        socket.onmessage = function (event) {
+            const msg = JSON.parse(event.data);
+            if (msg.type === 'telemetry') {
+                const temp = parseFloat(msg.data.iot_sensor_temp || 0);
+                const delay = parseFloat(msg.data.iot_ingestion_delay || 0);
+                const pdr = parseFloat(msg.data.iot_pdr || 0);
+
+                // Update text nodes
+                const tempNode = document.getElementById('metric-temp');
+                if (tempNode) tempNode.querySelector('span:last-child').innerText = temp.toFixed(1) + '°C';
+
+                const vibNode = document.getElementById('metric-vibration'); // Using pdr mapped to vibration visuals
+                if (vibNode) vibNode.querySelector('span:last-child').innerText = pdr.toFixed(2);
+
+                const cycleNode = document.getElementById('metric-cycle'); // Using delay mapped to cycle visuals
+                if (cycleNode) cycleNode.querySelector('span:last-child').innerText = delay.toFixed(1) + 'ms';
+
+                // Shift and push for line charts
+                realData_temp.shift(); realData_temp.push({ time: realData_temp[realData_temp.length - 1].time + 1, value: temp });
+                realData_vib.shift(); realData_vib.push({ time: realData_vib[realData_vib.length - 1].time + 1, value: pdr * 10 }); // upscale for chart visual appeal
+                realData_cycle.shift(); realData_cycle.push({ time: realData_cycle[realData_cycle.length - 1].time + 1, value: delay });
+
+                // Re-draw charts
+                drawLineChart('chart-temp', realData_temp, '#ef4444', true, '°C');
+                drawLineChart('chart-vibration', realData_vib, '#a855f7', true, '');
+                drawLineChart('chart-cycle', realData_cycle, '#3b82f6', true, ' ms');
+            }
+        };
     </script>
 </body>
 

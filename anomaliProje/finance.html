@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEXUS · FINANCE ERP DEEP DIVE · ANALYTICS</title>
-    
+
     <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- D3.js -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    
+
     <!-- Three.js -->
     <script type="importmap">
         {
@@ -23,7 +26,7 @@
             }
         }
     </script>
-    
+
     <style>
         * {
             margin: 0;
@@ -62,7 +65,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
+            background-image:
                 linear-gradient(rgba(255, 215, 0, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255, 215, 0, 0.03) 1px, transparent 1px);
             background-size: 40px 40px;
@@ -77,9 +80,9 @@
             -webkit-backdrop-filter: blur(20px) saturate(200%);
             border: 1px solid rgba(255, 215, 0, 0.2);
             border-radius: 28px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 
-                        0 0 0 1px rgba(255, 215, 0, 0.15) inset,
-                        0 0 40px rgba(255, 215, 0, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(255, 215, 0, 0.15) inset,
+                0 0 40px rgba(255, 215, 0, 0.1);
         }
 
         .glass-premium-light {
@@ -111,8 +114,15 @@
         }
 
         @keyframes financePulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
         }
 
         .node-finance-primary::before {
@@ -142,8 +152,17 @@
         }
 
         @keyframes glowPulse {
-            0%, 100% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.1); }
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.1);
+            }
         }
 
         /* Metric nodes - finans metrikleri */
@@ -174,26 +193,44 @@
         }
 
         /* Finans metrikleri için özel renkler */
-        .metric-node.transaction-volume { 
-            box-shadow: 0 0 50px rgba(34, 197, 94, 0.6), 0 20px 40px -15px rgba(0, 0, 0, 0.6); 
+        .metric-node.transaction-volume {
+            box-shadow: 0 0 50px rgba(34, 197, 94, 0.6), 0 20px 40px -15px rgba(0, 0, 0, 0.6);
             animation: volumePulse 3s ease-in-out infinite;
         }
-        .metric-node.auth-error { 
-            box-shadow: 0 0 50px rgba(239, 68, 68, 0.6), 0 20px 40px -15px rgba(0, 0, 0, 0.6); 
+
+        .metric-node.auth-error {
+            box-shadow: 0 0 50px rgba(239, 68, 68, 0.6), 0 20px 40px -15px rgba(0, 0, 0, 0.6);
             animation: errorPulse 1.5s ease-in-out infinite;
         }
-        .metric-node.cart-value { 
-            box-shadow: 0 0 50px rgba(59, 130, 246, 0.6), 0 20px 40px -15px rgba(0, 0, 0, 0.6); 
+
+        .metric-node.cart-value {
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.6), 0 20px 40px -15px rgba(0, 0, 0, 0.6);
         }
 
         @keyframes volumePulse {
-            0%, 100% { box-shadow: 0 0 50px rgba(34, 197, 94, 0.6); }
-            50% { box-shadow: 0 0 80px rgba(34, 197, 94, 0.9); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 50px rgba(34, 197, 94, 0.6);
+            }
+
+            50% {
+                box-shadow: 0 0 80px rgba(34, 197, 94, 0.9);
+            }
         }
 
         @keyframes errorPulse {
-            0%, 100% { box-shadow: 0 0 50px rgba(239, 68, 68, 0.6); transform: scale(1); }
-            50% { box-shadow: 0 0 80px rgba(239, 68, 68, 0.9); transform: scale(1.02); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 50px rgba(239, 68, 68, 0.6);
+                transform: scale(1);
+            }
+
+            50% {
+                box-shadow: 0 0 80px rgba(239, 68, 68, 0.9);
+                transform: scale(1.02);
+            }
         }
 
         /* Connection lines - altın rengi */
@@ -278,13 +315,23 @@
         }
 
         @keyframes rotateSlow {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
         }
 
         @keyframes rotateReverse {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(-360deg); }
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(-360deg);
+            }
         }
 
         /* Data particles - altın rengi */
@@ -302,10 +349,24 @@
         }
 
         @keyframes flowParticle {
-            0% { opacity: 0; transform: translate(0, 0) scale(1); }
-            10% { opacity: 1; transform: translate(40px, 40px) scale(2); }
-            90% { opacity: 1; }
-            100% { opacity: 0; transform: translate(150px, 150px) scale(0.8); }
+            0% {
+                opacity: 0;
+                transform: translate(0, 0) scale(1);
+            }
+
+            10% {
+                opacity: 1;
+                transform: translate(40px, 40px) scale(2);
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(150px, 150px) scale(0.8);
+            }
         }
 
         /* Canvas for particles */
@@ -384,7 +445,7 @@
             font-size: 12px;
             color: #94a3b8;
             margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 12px;
         }
 
@@ -407,12 +468,19 @@
             animation: bounce 2s infinite;
             color: white;
             font-size: 14px;
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
         }
 
         @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(10px); }
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(10px);
+            }
         }
 
         /* Back button */
@@ -454,8 +522,15 @@
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-50%) translateX(60px); }
-            to { opacity: 1; transform: translateY(-50%) translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-50%) translateX(60px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(-50%) translateX(0);
+            }
         }
 
         .metric-indicator {
@@ -504,12 +579,18 @@
         }
 
         @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
         }
 
         /* D3 chart customization */
-        .axis path, .axis line {
+        .axis path,
+        .axis line {
             stroke: rgba(148, 163, 184, 0.2);
         }
 
@@ -537,7 +618,7 @@
             font-size: 12px;
             pointer-events: none;
             z-index: 1000;
-            box-shadow: 0 10px 20px -10px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.5);
         }
 
         /* Time indicator */
@@ -573,6 +654,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Particle Canvas -->
@@ -670,7 +752,8 @@
             </div>
 
             <!-- GNN Analysis -->
-            <div class="mt-5 p-4 bg-gradient-to-br from-purple-500/10 to-[#FFD700]/10 rounded-xl border border-[#FFD700]/20">
+            <div
+                class="mt-5 p-4 bg-gradient-to-br from-purple-500/10 to-[#FFD700]/10 rounded-xl border border-[#FFD700]/20">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
                         <i class="fas fa-brain text-purple-400"></i>
@@ -693,29 +776,31 @@
 
         <!-- TOP SECTION: Network Graph -->
         <div class="top-section" id="top-section">
-            
+
             <!-- Orbital rings -->
             <div class="orbital-ring-extra"></div>
             <div class="orbital-ring"></div>
             <div class="orbital-ring-inner"></div>
-            
+
             <!-- Finance Primary Node -->
             <div class="node-finance-primary" id="finance-primary">
                 <div class="text-center">
                     <div class="text-sm font-extrabold text-white tracking-wider mb-1">FINANCE ERP</div>
                     <div class="text-xs font-medium text-white/70">PRIMARY HUB</div>
                 </div>
-                <div class="absolute -top-3 -right-3 w-5 h-5 bg-[#FFD700] rounded-full border-2 border-white/40 animate-pulse"></div>
+                <div
+                    class="absolute -top-3 -right-3 w-5 h-5 bg-[#FFD700] rounded-full border-2 border-white/40 animate-pulse">
+                </div>
             </div>
 
             <!-- Financial Metric Nodes - 120° açı ile (3 metrik) -->
             <!-- Transaction Volume - Normal (90°) -->
-            <div class="metric-node transaction-volume" id="metric-volume" 
-                 style="left: calc(50% - 65px + 250px * 0); top: calc(50% - 65px + 250px * -1);">
+            <div class="metric-node transaction-volume" id="metric-volume"
+                style="left: calc(50% - 65px + 250px * 0); top: calc(50% - 65px + 250px * -1);">
                 <i class="fas fa-arrow-trend-up text-2xl text-green-400 mb-1"></i>
                 <span class="text-sm font-bold text-white">VOLUME</span>
                 <span class="text-xs text-green-400">1.2M</span>
-                
+
                 <!-- Tooltip -->
                 <div class="tooltip-premium">
                     <div class="flex justify-between items-center mb-3">
@@ -745,12 +830,12 @@
             </div>
 
             <!-- Auth Error Rate - Critical (210°) -->
-            <div class="metric-node auth-error" id="metric-error" 
-                 style="left: calc(50% - 65px + 250px * -0.866); top: calc(50% - 65px + 250px * 0.5);">
+            <div class="metric-node auth-error" id="metric-error"
+                style="left: calc(50% - 65px + 250px * -0.866); top: calc(50% - 65px + 250px * 0.5);">
                 <i class="fas fa-ban text-2xl text-red-400 mb-1"></i>
                 <span class="text-sm font-bold text-white">ERROR</span>
                 <span class="text-xs text-red-400">3.2%</span>
-                
+
                 <!-- Tooltip -->
                 <div class="tooltip-premium">
                     <div class="flex justify-between items-center mb-3">
@@ -783,12 +868,12 @@
             </div>
 
             <!-- Average Cart Value - Stable (330°) -->
-            <div class="metric-node cart-value" id="metric-cart" 
-                 style="left: calc(50% - 65px + 250px * 0.866); top: calc(50% - 65px + 250px * 0.5);">
+            <div class="metric-node cart-value" id="metric-cart"
+                style="left: calc(50% - 65px + 250px * 0.866); top: calc(50% - 65px + 250px * 0.5);">
                 <i class="fas fa-cart-shopping text-2xl text-blue-400 mb-1"></i>
                 <span class="text-sm font-bold text-white">CART</span>
                 <span class="text-xs text-blue-400">$245</span>
-                
+
                 <!-- Tooltip -->
                 <div class="tooltip-premium">
                     <div class="flex justify-between items-center mb-3">
@@ -822,7 +907,8 @@
             <div id="particle-container" class="absolute inset-0 pointer-events-none" style="z-index: 25;"></div>
 
             <!-- Scroll Indicator -->
-            <div class="scroll-indicator" onclick="document.getElementById('main-container').scrollTo({top: window.innerHeight, behavior: 'smooth'})">
+            <div class="scroll-indicator"
+                onclick="document.getElementById('main-container').scrollTo({top: window.innerHeight, behavior: 'smooth'})">
                 <i class="fas fa-chart-line text-[#FFD700]"></i>
                 <span>View Financial Analytics</span>
                 <i class="fas fa-chevron-down text-[#FFD700]"></i>
@@ -853,7 +939,8 @@
                     <div class="chart-title">
                         <i class="fas fa-arrow-trend-up text-green-400"></i>
                         Transaction Volume
-                        <span class="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded-full ml-auto">Normal</span>
+                        <span
+                            class="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded-full ml-auto">Normal</span>
                     </div>
                     <div class="chart-subtitle">Last 24 hours · Avg 1.1M · Peak 1.3M</div>
                     <div id="chart-volume" style="width: 100%; height: 180px;"></div>
@@ -984,7 +1071,7 @@
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-        
+
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
@@ -996,10 +1083,10 @@
             const radius = 30 + Math.random() * 20;
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos((Math.random() * 2) - 1);
-            
+
             posArray[i] = radius * Math.sin(phi) * Math.cos(theta);
-            posArray[i+1] = radius * Math.sin(phi) * Math.sin(theta) * 0.4;
-            posArray[i+2] = radius * Math.cos(phi);
+            posArray[i + 1] = radius * Math.sin(phi) * Math.sin(theta) * 0.4;
+            posArray[i + 2] = radius * Math.cos(phi);
         }
 
         particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
@@ -1046,33 +1133,33 @@
             const container = document.getElementById('connection-lines');
             if (!container) return;
             container.innerHTML = '';
-            
+
             const financeNode = document.getElementById('finance-primary');
             const metrics = ['metric-volume', 'metric-error', 'metric-cart'];
-            
+
             const financeRect = financeNode.getBoundingClientRect();
             const financeCenter = { x: financeRect.left + financeRect.width / 2, y: financeRect.top + financeRect.height / 2 };
-            
+
             metrics.forEach(id => {
                 const metric = document.getElementById(id);
                 if (!metric) return;
-                
+
                 const metricRect = metric.getBoundingClientRect();
                 const metricCenter = { x: metricRect.left + metricRect.width / 2, y: metricRect.top + metricRect.height / 2 };
-                
+
                 const line = document.createElement('div');
                 line.className = 'connection-line';
-                
+
                 const dx = metricCenter.x - financeCenter.x;
                 const dy = metricCenter.y - financeCenter.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-                
+
                 line.style.width = distance + 'px';
                 line.style.left = financeCenter.x + 'px';
                 line.style.top = financeCenter.y + 'px';
                 line.style.transform = `rotate(${angle}deg)`;
-                
+
                 container.appendChild(line);
             });
         }
@@ -1084,7 +1171,7 @@
         function createDataParticles() {
             const container = document.getElementById('particle-container');
             if (!container) return;
-            
+
             setInterval(() => {
                 for (let i = 0; i < 10; i++) {
                     setTimeout(() => {
@@ -1221,7 +1308,7 @@
                 .attr("width", width)
                 .attr("height", height)
                 .append("g")
-                .attr("transform", `translate(${width/2},${height/2})`);
+                .attr("transform", `translate(${width / 2},${height / 2})`);
 
             const pie = d3.pie().value(d => d.value);
             const arc = d3.arc().innerRadius(radius * 0.6).outerRadius(radius);
@@ -1238,8 +1325,8 @@
                 .attr("stroke-width", 1)
                 .attr("filter", "drop-shadow(0 0 8px currentColor)")
                 .style("transition", "all 0.3s")
-                .on("mouseenter", function() { d3.select(this).attr("transform", "scale(1.02)"); })
-                .on("mouseleave", function() { d3.select(this).attr("transform", "scale(1)"); });
+                .on("mouseenter", function () { d3.select(this).attr("transform", "scale(1.02)"); })
+                .on("mouseleave", function () { d3.select(this).attr("transform", "scale(1)"); });
         }
 
         // Draw heatmap
@@ -1265,7 +1352,7 @@
                     if (i === 0) color = d3.interpolateRgb("#22c55e", "#facc15")(value); // volume
                     else if (i === 1) color = d3.interpolateRgb("#ef4444", "#facc15")(value); // error
                     else color = d3.interpolateRgb("#3b82f6", "#22c55e")(value); // cart
-                    
+
                     svg.append("rect")
                         .attr("x", j * cellSize + 40)
                         .attr("y", i * cellSize + 20)
@@ -1326,7 +1413,7 @@
             // Axis
             svg.append("g")
                 .attr("transform", `translate(0,${height - margin.bottom})`)
-                .call(d3.axisBottom(x).ticks(5).tickFormat(d => (d/1000000) + 'M'))
+                .call(d3.axisBottom(x).ticks(5).tickFormat(d => (d / 1000000) + 'M'))
                 .style("color", "#94a3b8")
                 .style("font-size", "8px");
 
@@ -1368,7 +1455,7 @@
                 .attr("height", height);
 
             const data = [65, 72, 78, 85, 92, 98, 105, 110, 118, 125, 132, 128, 122, 115, 108, 102, 98, 95, 92, 88, 82, 76, 70, 64];
-            
+
             const x = d3.scaleBand()
                 .domain(d3.range(24))
                 .range([margin.left, width - margin.right])
@@ -1404,47 +1491,83 @@
         setTimeout(() => {
             // Volume Chart (green)
             drawLineChart('chart-volume', generateTimeSeriesData(24, 0.9, 1.3, 0.1), '#22c55e', true, 'M');
-            
+
             // Error Chart (red)
             drawLineChart('chart-error', generateTimeSeriesData(24, 1.8, 3.2, 0.15), '#ef4444', true, '%');
-            
+
             // Cart Chart (blue)
             drawLineChart('chart-cart', generateTimeSeriesData(24, 235, 248, 0.05), '#3b82f6', true, '$');
-            
+
             // Correlation Chart
             drawScatterPlot('chart-correlation');
-            
+
             // Heatmap
             drawHeatmap('chart-heatmap');
-            
+
             // Payment Distribution Donut
             drawDonutChart('chart-distribution', [
                 { label: 'Credit Card', value: 54 },
                 { label: 'Digital Wallet', value: 32 },
                 { label: 'Other', value: 14 }
             ], ['#22c55e', '#3b82f6', '#a855f7']);
-            
+
             // Forecast Chart
             drawLineChart('chart-forecast', generateTimeSeriesData(8, 1.0, 1.25, 0.08), '#06b6d4', true, 'M');
-            
+
             // Hourly Pattern
             drawBarChart('chart-hourly');
-            
+
             // Error Types Donut
             drawDonutChart('chart-errors', [
                 { label: 'Auth', value: 45 },
                 { label: 'Timeout', value: 30 },
                 { label: 'Other', value: 25 }
             ], ['#ef4444', '#f97316', '#facc15']);
-            
+
         }, 200);
+
+        // Arrays to hold real data
+        let realData_vol = generateTimeSeriesData(24, 0.9, 1.3, 0.1);
+        let realData_err = generateTimeSeriesData(24, 1.8, 3.2, 0.15);
+        let realData_cart = generateTimeSeriesData(24, 235, 248, 0.05);
 
         // Update charts on resize
         window.addEventListener('resize', () => {
-            setTimeout(() => {
-                location.reload();
-            }, 200);
+            // Graceful resize handler without reloading
         });
+
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const socket = new WebSocket(`${wsProtocol}//${window.location.host}/ws/stream`);
+
+        socket.onmessage = function (event) {
+            const msg = JSON.parse(event.data);
+            if (msg.type === 'telemetry') {
+                const vol = parseFloat(msg.data.fin_trans_vol || 0);
+                const query = parseFloat(msg.data.fin_db_query_duration || 0);
+                const api = parseFloat(msg.data.fin_api_handshake || 0);
+
+                // Update text nodes
+                const volNode = document.getElementById('metric-volume');
+                if (volNode) volNode.querySelector('span:last-child').innerText = (vol / 1000000).toFixed(1) + 'M';
+
+                const errNode = document.getElementById('metric-error'); // Mapping api handshake to error visualization
+                if (errNode) errNode.querySelector('span:last-child').innerText = api.toFixed(2) + '%';
+
+                const cartNode = document.getElementById('metric-cart'); // Mapping query duration to cart visualization
+                if (cartNode) cartNode.querySelector('span:last-child').innerText = '$' + query.toFixed(0);
+
+                // Shift and push for line charts
+                realData_vol.shift(); realData_vol.push({ time: realData_vol[realData_vol.length - 1].time + 1, value: vol / 1000000 });
+                realData_err.shift(); realData_err.push({ time: realData_err[realData_err.length - 1].time + 1, value: api });
+                realData_cart.shift(); realData_cart.push({ time: realData_cart[realData_cart.length - 1].time + 1, value: query });
+
+                // Re-draw charts
+                drawLineChart('chart-volume', realData_vol, '#22c55e', true, 'M');
+                drawLineChart('chart-error', realData_err, '#ef4444', true, '%');
+                drawLineChart('chart-cart', realData_cart, '#3b82f6', true, '$');
+            }
+        };
     </script>
 </body>
+
 </html>

@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEXUS · Giriş & Kayıt</title>
-    
+
     <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Three.js -->
     <script type="importmap">
         {
@@ -20,7 +23,7 @@
             }
         }
     </script>
-    
+
     <style>
         * {
             margin: 0;
@@ -59,7 +62,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
+            background-image:
                 linear-gradient(rgba(31, 199, 98, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(31, 199, 98, 0.03) 1px, transparent 1px);
             background-size: 40px 40px;
@@ -74,9 +77,9 @@
             -webkit-backdrop-filter: blur(20px) saturate(200%);
             border: 1px solid rgba(31, 199, 98, 0.2);
             border-radius: 28px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 
-                        0 0 0 1px rgba(31, 199, 98, 0.15) inset,
-                        0 0 40px rgba(31, 199, 98, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(31, 199, 98, 0.15) inset,
+                0 0 40px rgba(31, 199, 98, 0.1);
         }
 
         .glass-premium-light {
@@ -130,13 +133,23 @@
         }
 
         @keyframes rotateSlow {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
         }
 
         @keyframes rotateReverse {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(-360deg); }
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(-360deg);
+            }
         }
 
         /* Data particles - login için */
@@ -154,10 +167,24 @@
         }
 
         @keyframes flowParticle {
-            0% { opacity: 0; transform: translate(0, 0) scale(1); }
-            10% { opacity: 0.8; transform: translate(100px, 100px) scale(2); }
-            90% { opacity: 0.8; }
-            100% { opacity: 0; transform: translate(300px, 300px) scale(0.5); }
+            0% {
+                opacity: 0;
+                transform: translate(0, 0) scale(1);
+            }
+
+            10% {
+                opacity: 0.8;
+                transform: translate(100px, 100px) scale(2);
+            }
+
+            90% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(300px, 300px) scale(0.5);
+            }
         }
 
         /* Canvas for particles */
@@ -204,7 +231,7 @@
             transition: all 0.3s ease;
         }
 
-        .input-field:focus + .input-icon {
+        .input-field:focus+.input-icon {
             color: #1fc762;
         }
 
@@ -268,19 +295,22 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(
-                to bottom right,
-                rgba(255, 255, 255, 0.2) 0%,
-                transparent 50%,
-                transparent 100%
-            );
+            background: linear-gradient(to bottom right,
+                    rgba(255, 255, 255, 0.2) 0%,
+                    transparent 50%,
+                    transparent 100%);
             transform: rotate(30deg);
             animation: shimmer 3s infinite;
         }
 
         @keyframes shimmer {
-            0% { transform: translateX(-100%) rotate(30deg); }
-            100% { transform: translateX(100%) rotate(30deg); }
+            0% {
+                transform: translateX(-100%) rotate(30deg);
+            }
+
+            100% {
+                transform: translateX(100%) rotate(30deg);
+            }
         }
 
         /* Social login buttons */
@@ -333,8 +363,15 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(30px, 30px) scale(1.1); }
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(30px, 30px) scale(1.1);
+            }
         }
 
         /* Brand logo */
@@ -352,8 +389,15 @@
         }
 
         @keyframes logoPulse {
-            0%, 100% { box-shadow: 0 0 30px #1fc762; }
-            50% { box-shadow: 0 0 50px #1fc762; }
+
+            0%,
+            100% {
+                box-shadow: 0 0 30px #1fc762;
+            }
+
+            50% {
+                box-shadow: 0 0 50px #1fc762;
+            }
         }
 
         /* Form container */
@@ -408,6 +452,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Particle Canvas -->
@@ -455,30 +500,36 @@
                             <!-- Email -->
                             <div class="relative">
                                 <i class="fas fa-envelope input-icon"></i>
-                                <input type="email" placeholder="E-posta adresiniz" class="input-field pl-12">
+                                <input type="email" id="loginEmail" placeholder="E-posta adresiniz"
+                                    class="input-field pl-12">
                             </div>
-                            
+
                             <!-- Password -->
                             <div class="relative">
                                 <i class="fas fa-lock input-icon"></i>
-                                <input type="password" placeholder="Şifreniz" class="input-field pl-12">
+                                <input type="password" id="loginPassword" placeholder="Şifreniz"
+                                    class="input-field pl-12">
                             </div>
 
                             <!-- Remember me & Forgot password -->
                             <div class="flex items-center justify-between">
                                 <label class="flex items-center cursor-pointer">
-                                    <input type="checkbox" class="w-4 h-4 rounded border-white/20 bg-white/5 checked:bg-brand focus:ring-brand/50 text-brand">
+                                    <input type="checkbox"
+                                        class="w-4 h-4 rounded border-white/20 bg-white/5 checked:bg-brand focus:ring-brand/50 text-brand">
                                     <span class="ml-2 text-sm text-slate-400">Beni hatırla</span>
                                 </label>
-                                <a href="#" class="text-sm text-brand hover:text-brand/80 transition">Şifremi unuttum</a>
+                                <a href="#" class="text-sm text-brand hover:text-brand/80 transition">Şifremi
+                                    unuttum</a>
                             </div>
 
                             <!-- Login Button -->
-                            <button type="submit" class="login-button">
+                            <button type="submit" id="loginSubmitBtn" class="login-button">
                                 <i class="fas fa-arrow-right-to-bracket mr-2"></i>
                                 Giriş Yap
                             </button>
                         </div>
+                        <div id="loginError" class="text-red-400 text-sm mt-3 hidden text-center">Hatalı e-posta veya
+                            şifre.</div>
                     </form>
 
                     <!-- Social Login -->
@@ -516,42 +567,51 @@
                             <!-- Name -->
                             <div class="relative">
                                 <i class="fas fa-user input-icon"></i>
-                                <input type="text" placeholder="Adınız Soyadınız" class="input-field pl-12">
+                                <input type="text" id="registerName" placeholder="Adınız Soyadınız"
+                                    class="input-field pl-12">
                             </div>
 
                             <!-- Email -->
                             <div class="relative">
                                 <i class="fas fa-envelope input-icon"></i>
-                                <input type="email" placeholder="E-posta adresiniz" class="input-field pl-12">
+                                <input type="email" id="registerEmail" placeholder="E-posta adresiniz"
+                                    class="input-field pl-12">
                             </div>
-                            
+
                             <!-- Password -->
                             <div class="relative">
                                 <i class="fas fa-lock input-icon"></i>
-                                <input type="password" placeholder="Şifreniz" class="input-field pl-12">
+                                <input type="password" id="registerPassword" placeholder="Şifreniz"
+                                    class="input-field pl-12">
                             </div>
 
                             <!-- Confirm Password -->
                             <div class="relative">
                                 <i class="fas fa-lock input-icon"></i>
-                                <input type="password" placeholder="Şifre tekrar" class="input-field pl-12">
+                                <input type="password" id="registerConfirm" placeholder="Şifre tekrar"
+                                    class="input-field pl-12">
                             </div>
 
                             <!-- Terms -->
                             <label class="flex items-start cursor-pointer">
-                                <input type="checkbox" class="w-4 h-4 mt-0.5 rounded border-white/20 bg-white/5 checked:bg-brand focus:ring-brand/50 text-brand">
+                                <input type="checkbox"
+                                    class="w-4 h-4 mt-0.5 rounded border-white/20 bg-white/5 checked:bg-brand focus:ring-brand/50 text-brand">
                                 <span class="ml-2 text-sm text-slate-400">
-                                    <a href="#" class="text-brand hover:text-brand/80">Kullanım koşulları</a>'nı ve 
-                                    <a href="#" class="text-brand hover:text-brand/80">gizlilik politikası</a>'nı kabul ediyorum
+                                    <a href="#" class="text-brand hover:text-brand/80">Kullanım koşulları</a>'nı ve
+                                    <a href="#" class="text-brand hover:text-brand/80">gizlilik politikası</a>'nı kabul
+                                    ediyorum
                                 </span>
                             </label>
 
                             <!-- Register Button -->
-                            <button type="submit" class="login-button">
+                            <button type="submit" id="registerSubmitBtn" class="login-button">
                                 <i class="fas fa-user-plus mr-2"></i>
                                 Kayıt Ol
                             </button>
                         </div>
+                        <div id="registerError" class="text-red-400 text-sm mt-3 hidden text-center"></div>
+                        <div id="registerSuccess" class="text-green-400 text-sm mt-3 hidden text-center">Başarıyla kayıt
+                            olundu! Giriş yapabilirsiniz.</div>
                     </form>
 
                     <!-- Social Register -->
@@ -596,7 +656,7 @@
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-        
+
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
@@ -608,10 +668,10 @@
             const radius = 20 + Math.random() * 15;
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos((Math.random() * 2) - 1);
-            
+
             posArray[i] = radius * Math.sin(phi) * Math.cos(theta);
-            posArray[i+1] = radius * Math.sin(phi) * Math.sin(theta) * 0.4;
-            posArray[i+2] = radius * Math.cos(phi);
+            posArray[i + 1] = radius * Math.sin(phi) * Math.sin(theta) * 0.4;
+            posArray[i + 2] = radius * Math.cos(phi);
         }
 
         particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
@@ -657,19 +717,19 @@
         function createDataParticles() {
             const container = document.getElementById('particle-container');
             if (!container) return;
-            
+
             setInterval(() => {
                 for (let i = 0; i < 5; i++) {
                     setTimeout(() => {
                         const particle = document.createElement('div');
                         particle.className = 'data-particle';
-                        
+
                         const angle = Math.random() * Math.PI * 2;
                         const distance = 100 + Math.random() * 200;
                         particle.style.left = '50%';
                         particle.style.top = '50%';
                         particle.style.transform = `translate(-50%, -50%) rotate(${angle}rad) translateX(${distance}px)`;
-                        
+
                         container.appendChild(particle);
                         setTimeout(() => particle.remove(), 8000);
                     }, i * 200);
@@ -687,7 +747,7 @@
         loginToggle.addEventListener('click', () => {
             loginToggle.classList.add('active');
             registerToggle.classList.remove('active');
-            
+
             loginForm.classList.remove('hidden-form');
             loginForm.classList.add('visible-form');
             registerForm.classList.remove('visible-form');
@@ -697,7 +757,7 @@
         registerToggle.addEventListener('click', () => {
             registerToggle.classList.add('active');
             loginToggle.classList.remove('active');
-            
+
             registerForm.classList.remove('hidden-form');
             registerForm.classList.add('visible-form');
             loginForm.classList.remove('visible-form');
@@ -714,6 +774,89 @@
                 input.parentElement.querySelector('.input-icon').style.color = 'rgba(255, 255, 255, 0.3)';
             });
         });
+
+        // Backend Integration
+        document.getElementById('loginSubmitBtn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+
+            errorDiv.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    if (data.token) {
+                        localStorage.setItem('auth_token', data.token);
+                    }
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    }
+                } else {
+                    errorDiv.innerText = data.detail || "Hatalı e-posta veya şifre.";
+                    errorDiv.classList.remove('hidden');
+                }
+            } catch (err) {
+                console.error("Login error:", err);
+                errorDiv.innerText = "Sunucu ile bağlantı kurulamadı.";
+                errorDiv.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('registerSubmitBtn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirm = document.getElementById('registerConfirm').value;
+
+            const errorDiv = document.getElementById('registerError');
+            const successDiv = document.getElementById('registerSuccess');
+
+            errorDiv.classList.add('hidden');
+            successDiv.classList.add('hidden');
+
+            if (password !== confirm) {
+                errorDiv.innerText = "Şifreler eşleşmiyor!";
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    successDiv.classList.remove('hidden');
+                    // Automatically switch to login tab shortly
+                    setTimeout(() => {
+                        document.getElementById('loginToggle').click();
+                        document.getElementById('loginEmail').value = email;
+                    }, 1500);
+                } else {
+                    errorDiv.innerText = data.detail || "Kayıt işlemi başarısız.";
+                    errorDiv.classList.remove('hidden');
+                }
+            } catch (err) {
+                console.error("Register error:", err);
+                errorDiv.innerText = "Sunucu ile bağlantı kurulamadı.";
+                errorDiv.classList.remove('hidden');
+            }
+        });
     </script>
 </body>
+
 </html>

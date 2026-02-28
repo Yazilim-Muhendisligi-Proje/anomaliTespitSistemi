@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEXUS · IT NETWORK DEEP DIVE · ANALYTICS</title>
-    
+
     <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- D3.js -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    
+
     <!-- Three.js -->
     <script type="importmap">
         {
@@ -23,7 +26,7 @@
             }
         }
     </script>
-    
+
     <style>
         * {
             margin: 0;
@@ -62,7 +65,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
+            background-image:
                 linear-gradient(rgba(31, 199, 98, 0.05) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(31, 199, 98, 0.05) 1px, transparent 1px);
             background-size: 40px 40px;
@@ -77,9 +80,9 @@
             -webkit-backdrop-filter: blur(20px) saturate(200%);
             border: 1px solid rgba(31, 199, 98, 0.2);
             border-radius: 28px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 
-                        0 0 0 1px rgba(31, 199, 98, 0.15) inset,
-                        0 0 40px rgba(31, 199, 98, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(31, 199, 98, 0.15) inset,
+                0 0 40px rgba(31, 199, 98, 0.1);
         }
 
         .glass-premium-light {
@@ -111,8 +114,15 @@
         }
 
         @keyframes itPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
         }
 
         .node-it-primary::before {
@@ -123,14 +133,23 @@
             top: -50%;
             left: -50%;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(31,199,98,0.3) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(31, 199, 98, 0.3) 0%, transparent 70%);
             z-index: -1;
             animation: glowPulse 3s ease-in-out infinite;
         }
 
         @keyframes glowPulse {
-            0%, 100% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.1); }
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.1);
+            }
         }
 
         /* Metric nodes */
@@ -160,18 +179,47 @@
             box-shadow: 0 30px 50px -15px rgba(31, 199, 98, 0.4);
         }
 
-        .metric-node.normal { box-shadow: 0 0 40px rgba(34, 197, 94, 0.5), 0 20px 40px -15px rgba(0, 0, 0, 0.6); }
-        .metric-node.warning { box-shadow: 0 0 50px rgba(250, 204, 21, 0.6), 0 20px 40px -15px rgba(0, 0, 0, 0.6); animation: warningPulse 2.5s ease-in-out infinite; }
-        .metric-node.critical { box-shadow: 0 0 60px rgba(239, 68, 68, 0.8), 0 20px 40px -15px rgba(0, 0, 0, 0.6); animation: criticalPulse 1s ease-in-out infinite; }
+        .metric-node.normal {
+            box-shadow: 0 0 40px rgba(34, 197, 94, 0.5), 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+        }
+
+        .metric-node.warning {
+            box-shadow: 0 0 50px rgba(250, 204, 21, 0.6), 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+            animation: warningPulse 2.5s ease-in-out infinite;
+        }
+
+        .metric-node.critical {
+            box-shadow: 0 0 60px rgba(239, 68, 68, 0.8), 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+            animation: criticalPulse 1s ease-in-out infinite;
+        }
 
         @keyframes warningPulse {
-            0%, 100% { box-shadow: 0 0 50px rgba(250, 204, 21, 0.6); transform: scale(1); }
-            50% { box-shadow: 0 0 80px rgba(250, 204, 21, 0.9); transform: scale(1.03); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 50px rgba(250, 204, 21, 0.6);
+                transform: scale(1);
+            }
+
+            50% {
+                box-shadow: 0 0 80px rgba(250, 204, 21, 0.9);
+                transform: scale(1.03);
+            }
         }
 
         @keyframes criticalPulse {
-            0%, 100% { box-shadow: 0 0 60px rgba(239, 68, 68, 0.8); opacity: 1; }
-            50% { box-shadow: 0 0 100px rgba(239, 68, 68, 1); opacity: 0.95; transform: scale(1.02); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 60px rgba(239, 68, 68, 0.8);
+                opacity: 1;
+            }
+
+            50% {
+                box-shadow: 0 0 100px rgba(239, 68, 68, 1);
+                opacity: 0.95;
+                transform: scale(1.02);
+            }
         }
 
         /* Connection lines */
@@ -256,13 +304,23 @@
         }
 
         @keyframes rotateSlow {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
         }
 
         @keyframes rotateReverse {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(-360deg); }
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(-360deg);
+            }
         }
 
         /* Data particles */
@@ -280,10 +338,24 @@
         }
 
         @keyframes flowParticle {
-            0% { opacity: 0; transform: translate(0, 0) scale(1); }
-            10% { opacity: 1; transform: translate(40px, 40px) scale(2); }
-            90% { opacity: 1; }
-            100% { opacity: 0; transform: translate(150px, 150px) scale(0.8); }
+            0% {
+                opacity: 0;
+                transform: translate(0, 0) scale(1);
+            }
+
+            10% {
+                opacity: 1;
+                transform: translate(40px, 40px) scale(2);
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(150px, 150px) scale(0.8);
+            }
         }
 
         /* Canvas for particles */
@@ -362,7 +434,7 @@
             font-size: 12px;
             color: #94a3b8;
             margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 12px;
         }
 
@@ -385,12 +457,19 @@
             animation: bounce 2s infinite;
             color: white;
             font-size: 14px;
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
         }
 
         @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(10px); }
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(10px);
+            }
         }
 
         /* Back button */
@@ -432,8 +511,15 @@
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-50%) translateX(60px); }
-            to { opacity: 1; transform: translateY(-50%) translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-50%) translateX(60px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(-50%) translateX(0);
+            }
         }
 
         .metric-indicator {
@@ -482,12 +568,18 @@
         }
 
         @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
         }
 
         /* D3 chart customization */
-        .axis path, .axis line {
+        .axis path,
+        .axis line {
             stroke: rgba(148, 163, 184, 0.2);
         }
 
@@ -515,7 +607,7 @@
             font-size: 12px;
             pointer-events: none;
             z-index: 1000;
-            box-shadow: 0 10px 20px -10px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.5);
         }
 
         /* Time indicator */
@@ -551,6 +643,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Particle Canvas -->
@@ -626,7 +719,8 @@
                             <span class="text-sm font-bold text-yellow-400">74%</span>
                         </div>
                         <div class="flex items-center gap-3 mt-1">
-                            <span class="text-xs px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-300">Warning</span>
+                            <span
+                                class="text-xs px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-300">Warning</span>
                         </div>
                     </div>
                 </div>
@@ -648,7 +742,8 @@
             </div>
 
             <!-- GNN Analysis -->
-            <div class="mt-5 p-4 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-xl border border-purple-500/20">
+            <div
+                class="mt-5 p-4 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-xl border border-purple-500/20">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
                         <i class="fas fa-brain text-purple-400"></i>
@@ -671,47 +766,54 @@
 
         <!-- TOP SECTION: Network Graph -->
         <div class="top-section" id="top-section">
-            
+
             <!-- Orbital rings -->
             <div class="orbital-ring-extra"></div>
             <div class="orbital-ring"></div>
             <div class="orbital-ring-inner"></div>
-            
+
             <!-- IT Primary Node -->
             <div class="node-it-primary" id="it-primary">
                 <div class="text-center">
                     <div class="text-sm font-extrabold text-white tracking-wider mb-1">IT NETWORK</div>
                     <div class="text-xs font-medium text-white/70">PRIMARY HUB</div>
                 </div>
-                <div class="absolute -top-3 -right-3 w-5 h-5 bg-green-400 rounded-full border-2 border-white/40 animate-pulse"></div>
+                <div
+                    class="absolute -top-3 -right-3 w-5 h-5 bg-green-400 rounded-full border-2 border-white/40 animate-pulse">
+                </div>
             </div>
 
             <!-- Metric Nodes - 72° açı ile -->
-            <div class="metric-node critical" id="metric-cpu" style="left: calc(50% - 50px + 220px * 0.809); top: calc(50% - 50px + 220px * 0.588);">
+            <div class="metric-node critical" id="metric-cpu"
+                style="left: calc(50% - 50px + 220px * 0.809); top: calc(50% - 50px + 220px * 0.588);">
                 <i class="fas fa-microchip text-2xl text-red-400 mb-1"></i>
                 <span class="text-sm font-bold text-white">CPU</span>
                 <span class="text-xs text-red-400">87%</span>
             </div>
 
-            <div class="metric-node warning" id="metric-ram" style="left: calc(50% - 50px + 220px * -0.309); top: calc(50% - 50px + 220px * 0.951);">
+            <div class="metric-node warning" id="metric-ram"
+                style="left: calc(50% - 50px + 220px * -0.309); top: calc(50% - 50px + 220px * 0.951);">
                 <i class="fas fa-memory text-2xl text-yellow-400 mb-1"></i>
                 <span class="text-sm font-bold text-white">RAM</span>
                 <span class="text-xs text-yellow-400">74%</span>
             </div>
 
-            <div class="metric-node critical" id="metric-packet" style="left: calc(50% - 50px + 220px * -1); top: calc(50% - 50px + 220px * 0);">
+            <div class="metric-node critical" id="metric-packet"
+                style="left: calc(50% - 50px + 220px * -1); top: calc(50% - 50px + 220px * 0);">
                 <i class="fas fa-times-circle text-2xl text-red-400 mb-1"></i>
                 <span class="text-sm font-bold text-white">PACKET</span>
                 <span class="text-xs text-red-400">12%</span>
             </div>
 
-            <div class="metric-node normal" id="metric-users" style="left: calc(50% - 50px + 220px * -0.309); top: calc(50% - 50px + 220px * -0.951);">
+            <div class="metric-node normal" id="metric-users"
+                style="left: calc(50% - 50px + 220px * -0.309); top: calc(50% - 50px + 220px * -0.951);">
                 <i class="fas fa-users text-2xl text-green-400 mb-1"></i>
                 <span class="text-sm font-bold text-white">USERS</span>
                 <span class="text-xs text-green-400">1.2k</span>
             </div>
 
-            <div class="metric-node warning" id="metric-bandwidth" style="left: calc(50% - 50px + 220px * 0.809); top: calc(50% - 50px + 220px * -0.588);">
+            <div class="metric-node warning" id="metric-bandwidth"
+                style="left: calc(50% - 50px + 220px * 0.809); top: calc(50% - 50px + 220px * -0.588);">
                 <i class="fas fa-wifi text-2xl text-yellow-400 mb-1"></i>
                 <span class="text-sm font-bold text-white">BAND</span>
                 <span class="text-xs text-yellow-400">89%</span>
@@ -722,7 +824,8 @@
             <div id="particle-container" class="absolute inset-0 pointer-events-none" style="z-index: 25;"></div>
 
             <!-- Scroll Indicator -->
-            <div class="scroll-indicator" onclick="document.getElementById('main-container').scrollTo({top: window.innerHeight, behavior: 'smooth'})">
+            <div class="scroll-indicator"
+                onclick="document.getElementById('main-container').scrollTo({top: window.innerHeight, behavior: 'smooth'})">
                 <i class="fas fa-chart-line text-brand"></i>
                 <span>View Detailed Analytics</span>
                 <i class="fas fa-chevron-down text-brand"></i>
@@ -764,7 +867,8 @@
                     <div class="chart-title">
                         <i class="fas fa-memory text-yellow-400"></i>
                         RAM Usage Trend
-                        <span class="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full ml-auto">Warning</span>
+                        <span
+                            class="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full ml-auto">Warning</span>
                     </div>
                     <div class="chart-subtitle">Last 24 hours · Avg 68% · Peak 82%</div>
                     <div id="chart-ram" style="width: 100%; height: 180px;"></div>
@@ -789,7 +893,8 @@
                     <div class="chart-title">
                         <i class="fas fa-wifi text-yellow-400"></i>
                         Bandwidth Utilization
-                        <span class="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full ml-auto">Warning</span>
+                        <span
+                            class="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full ml-auto">Warning</span>
                     </div>
                     <div class="chart-subtitle">Inbound vs Outbound · 1 Gbps link</div>
                     <div id="chart-bandwidth" style="width: 100%; height: 180px;"></div>
@@ -800,7 +905,8 @@
                     <div class="chart-title">
                         <i class="fas fa-users text-green-400"></i>
                         Active Users
-                        <span class="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded-full ml-auto">Normal</span>
+                        <span
+                            class="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded-full ml-auto">Normal</span>
                     </div>
                     <div class="chart-subtitle">Concurrent sessions · Peak 2,847</div>
                     <div id="chart-users" style="width: 100%; height: 180px;"></div>
@@ -897,7 +1003,7 @@
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-        
+
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
@@ -909,10 +1015,10 @@
             const radius = 30 + Math.random() * 20;
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos((Math.random() * 2) - 1);
-            
+
             posArray[i] = radius * Math.sin(phi) * Math.cos(theta);
-            posArray[i+1] = radius * Math.sin(phi) * Math.sin(theta) * 0.4;
-            posArray[i+2] = radius * Math.cos(phi);
+            posArray[i + 1] = radius * Math.sin(phi) * Math.sin(theta) * 0.4;
+            posArray[i + 2] = radius * Math.cos(phi);
         }
 
         particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
@@ -959,33 +1065,33 @@
             const container = document.getElementById('connection-lines');
             if (!container) return;
             container.innerHTML = '';
-            
+
             const itNode = document.getElementById('it-primary');
             const metrics = ['metric-cpu', 'metric-ram', 'metric-packet', 'metric-users', 'metric-bandwidth'];
-            
+
             const itRect = itNode.getBoundingClientRect();
             const itCenter = { x: itRect.left + itRect.width / 2, y: itRect.top + itRect.height / 2 };
-            
+
             metrics.forEach(id => {
                 const metric = document.getElementById(id);
                 if (!metric) return;
-                
+
                 const metricRect = metric.getBoundingClientRect();
                 const metricCenter = { x: metricRect.left + metricRect.width / 2, y: metricRect.top + metricRect.height / 2 };
-                
+
                 const line = document.createElement('div');
                 line.className = 'connection-line';
-                
+
                 const dx = metricCenter.x - itCenter.x;
                 const dy = metricCenter.y - itCenter.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-                
+
                 line.style.width = distance + 'px';
                 line.style.left = itCenter.x + 'px';
                 line.style.top = itCenter.y + 'px';
                 line.style.transform = `rotate(${angle}deg)`;
-                
+
                 container.appendChild(line);
             });
         }
@@ -997,7 +1103,7 @@
         function createDataParticles() {
             const container = document.getElementById('particle-container');
             if (!container) return;
-            
+
             setInterval(() => {
                 for (let i = 0; i < 10; i++) {
                     setTimeout(() => {
@@ -1134,7 +1240,7 @@
                 .attr("width", width)
                 .attr("height", height)
                 .append("g")
-                .attr("transform", `translate(${width/2},${height/2})`);
+                .attr("transform", `translate(${width / 2},${height / 2})`);
 
             const pie = d3.pie().value(d => d.value);
             const arc = d3.arc().innerRadius(radius * 0.6).outerRadius(radius);
@@ -1151,8 +1257,8 @@
                 .attr("stroke-width", 1)
                 .attr("filter", "drop-shadow(0 0 8px currentColor)")
                 .style("transition", "all 0.3s")
-                .on("mouseenter", function() { d3.select(this).attr("transform", "scale(1.02)"); })
-                .on("mouseleave", function() { d3.select(this).attr("transform", "scale(1)"); });
+                .on("mouseenter", function () { d3.select(this).attr("transform", "scale(1.02)"); })
+                .on("mouseleave", function () { d3.select(this).attr("transform", "scale(1)"); });
 
             // Legend inside
             svg.append("text")
@@ -1184,7 +1290,7 @@
                 for (let j = 0; j < 24; j++) {
                     const value = Math.random();
                     const color = d3.interpolateRgb("#1fc762", "#ef4444")(value);
-                    
+
                     svg.append("rect")
                         .attr("x", j * cellSize + 30)
                         .attr("y", i * cellSize + 20)
@@ -1214,50 +1320,85 @@
         setTimeout(() => {
             // CPU Chart (red)
             drawLineChart('chart-cpu', generateTimeSeriesData(24, 45, 94, 0.4), '#ef4444', true);
-            
+
             // RAM Chart (yellow)
             drawLineChart('chart-ram', generateTimeSeriesData(24, 40, 82, 0.3), '#facc15', true);
-            
+
             // Packet Loss (red)
             drawLineChart('chart-packet', generateTimeSeriesData(24, 0.5, 12.4, 0.5), '#ef4444');
-            
+
             // Bandwidth (yellow) - stacked area
             drawLineChart('chart-bandwidth', generateTimeSeriesData(24, 40, 89, 0.25), '#facc15', true);
-            
+
             // Active Users (green)
             drawLineChart('chart-users', generateTimeSeriesData(24, 800, 2100, 0.2), '#22c55e', true);
-            
+
             // RTT (blue)
             drawLineChart('chart-rtt', generateTimeSeriesData(24, 15, 42, 0.15), '#60a5fa', true);
-            
+
             // Traffic Distribution
             const trafficData = [
                 { time: i, value1: Math.random() * 60 + 20, value2: Math.random() * 40 + 10 }
             ];
             drawLineChart('chart-traffic', generateTimeSeriesData(24, 30, 95, 0.3), '#a78bfa', true);
-            
+
             // Heatmap
             drawHeatmap('chart-heatmap');
-            
+
             // Protocol Distribution (Donut)
             drawDonutChart('chart-protocol', [
                 { label: 'TCP', value: 68 },
                 { label: 'UDP', value: 24 },
                 { label: 'ICMP', value: 8 }
             ], ['#3b82f6', '#a855f7', '#ec4899']);
-            
+
             // Forecast Chart
             drawLineChart('chart-forecast', generateTimeSeriesData(8, 45, 85, 0.2), '#06b6d4', true);
-            
+
         }, 200);
+
+        // Arrays to hold real data
+        let realData_bandwidth = generateTimeSeriesData(24, 40, 89, 0.25);
+        let realData_latency = generateTimeSeriesData(24, 0.5, 12.4, 0.5);
+        let realData_resptime = generateTimeSeriesData(24, 45, 94, 0.4);
 
         // Update charts on resize
         window.addEventListener('resize', () => {
-            setTimeout(() => {
-                // Redraw all charts (simplified - would need proper refresh)
-                location.reload(); // Quick solution for demo
-            }, 200);
+            // Let it just gracefully stay or we can use generic resize handlers, avoiding reload
         });
+
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const socket = new WebSocket(`${wsProtocol}//${window.location.host}/ws/stream`);
+
+        socket.onmessage = function (event) {
+            const msg = JSON.parse(event.data);
+            if (msg.type === 'telemetry') {
+                const bw = parseFloat(msg.data.it_bandwidth || 0);
+                const lat = parseFloat(msg.data.it_backbone_latency || 0);
+                const resp = parseFloat(msg.data.it_server_resp_time || 0);
+
+                // Update text nodes if we have them
+                const cpuNode = document.getElementById('metric-cpu');
+                if (cpuNode) cpuNode.querySelector('span:last-child').innerText = resp.toFixed(1) + 'ms';
+
+                const packetNode = document.getElementById('metric-packet');
+                if (packetNode) packetNode.querySelector('span:last-child').innerText = lat.toFixed(1) + 'ms';
+
+                const bwNode = document.getElementById('metric-bandwidth');
+                if (bwNode) bwNode.querySelector('span:last-child').innerText = bw.toFixed(1) + 'Mbps';
+
+                // Shift and push for line charts
+                realData_bandwidth.shift(); realData_bandwidth.push({ time: realData_bandwidth[realData_bandwidth.length - 1].time + 1, value: bw });
+                realData_latency.shift(); realData_latency.push({ time: realData_latency[realData_latency.length - 1].time + 1, value: lat });
+                realData_resptime.shift(); realData_resptime.push({ time: realData_resptime[realData_resptime.length - 1].time + 1, value: resp });
+
+                // Re-draw
+                drawLineChart('chart-bandwidth', realData_bandwidth, '#facc15', true);
+                drawLineChart('chart-packet', realData_latency, '#ef4444');
+                drawLineChart('chart-cpu', realData_resptime, '#ef4444', true);
+            }
+        };
     </script>
 </body>
+
 </html>
