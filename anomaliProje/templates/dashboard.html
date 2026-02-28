@@ -94,6 +94,7 @@
             border: 1px solid transparent;
             background: linear-gradient(45deg, #1fc762, #0a8a40, #1fc762) border-box;
             -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
             animation: borderRotate 4s linear infinite;
@@ -137,22 +138,38 @@
             }
         }
 
+        @keyframes globalAlertPulse {
+
+            0%,
+            100% {
+                box-shadow: inset 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+
+            50% {
+                box-shadow: inset 0 0 180px 10px rgba(239, 68, 68, 0.25);
+            }
+        }
+
+        body.alert-active {
+            animation: globalAlertPulse 2s ease-in-out infinite;
+        }
+
         /* Orbital ring */
         .orbital-ring {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 380px;
-            height: 380px;
+            width: 266px;
+            height: 266px;
             border: 1px dashed rgba(64, 224, 128, 0.2);
             border-radius: 50%;
             animation: rotate 60s linear infinite;
         }
 
         .orbital-ring-inner {
-            width: 280px;
-            height: 280px;
+            width: 196px;
+            height: 196px;
             border: 1px solid rgba(64, 224, 128, 0.15);
             border-radius: 50%;
             position: absolute;
@@ -189,7 +206,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 20;
             cursor: pointer;
         }
@@ -198,6 +215,12 @@
             transform: scale(1.1);
             filter: brightness(1.2);
             z-index: 100;
+        }
+
+        .node-interactive:hover {
+            transform: scale(1.15);
+            filter: brightness(1.3) drop-shadow(0 0 15px #1fc762) !important;
+            border-color: rgba(255, 255, 255, 0.8) !important;
         }
 
         .node-core {
@@ -444,25 +467,25 @@
             </defs>
 
             <!-- Central to IT -->
-            <line x1="50%" y1="50%" x2="25%" y2="25%" stroke="url(#line-gradient)" stroke-width="1.5"
-                stroke-dasharray="4 4" filter="url(#glow)">
+            <line x1="50%" y1="50%" x2="calc(50% - 94px)" y2="calc(50% - 94px)" stroke="url(#line-gradient)"
+                stroke-width="1.5" stroke-dasharray="4 4" filter="url(#glow)">
                 <animate attributeName="stroke-dashoffset" values="0;100" dur="10s" repeatCount="indefinite" />
             </line>
             <!-- Central to HR -->
-            <line x1="50%" y1="50%" x2="75%" y2="25%" stroke="url(#line-gradient)" stroke-width="1.5"
-                stroke-dasharray="4 4" filter="url(#glow)">
+            <line x1="50%" y1="50%" x2="calc(50% + 94px)" y2="calc(50% - 94px)" stroke="url(#line-gradient)"
+                stroke-width="1.5" stroke-dasharray="4 4" filter="url(#glow)">
                 <animate attributeName="stroke-dashoffset" values="0;100" dur="10s" repeatCount="indefinite"
                     begin="2s" />
             </line>
             <!-- Central to IoT -->
-            <line x1="50%" y1="50%" x2="25%" y2="75%" stroke="url(#line-gradient)" stroke-width="2"
-                stroke-dasharray="6 4" filter="url(#glow)" style="--tw-stroke-opacity: 0.8;">
+            <line x1="50%" y1="50%" x2="calc(50% - 94px)" y2="calc(50% + 94px)" stroke="url(#line-gradient)"
+                stroke-width="2" stroke-dasharray="6 4" filter="url(#glow)" style="--tw-stroke-opacity: 0.8;">
                 <animate attributeName="stroke-dashoffset" values="0;100" dur="8s" repeatCount="indefinite"
                     begin="1s" />
             </line>
             <!-- Central to Finance -->
-            <line x1="50%" y1="50%" x2="75%" y2="75%" stroke="url(#line-gradient)" stroke-width="1.5"
-                stroke-dasharray="4 4" filter="url(#glow)">
+            <line x1="50%" y1="50%" x2="calc(50% + 94px)" y2="calc(50% + 94px)" stroke="url(#line-gradient)"
+                stroke-width="1.5" stroke-dasharray="4 4" filter="url(#glow)">
                 <animate attributeName="stroke-dashoffset" values="0;100" dur="10s" repeatCount="indefinite"
                     begin="3s" />
             </line>
@@ -487,10 +510,13 @@
         </div>
 
         <!-- IT Node (Green - Stable) -->
-        <div class="node node-satellite"
-            style="background: radial-gradient(circle at 30% 30%, #4ade80, #16a34a); left: 18%; top: 18%; box-shadow: 0 0 30px rgba(74, 222, 128, 0.3);"
-            id="node-it">
+        <div class="node node-satellite node-interactive"
+            style="background: radial-gradient(circle at 30% 30%, #4ade80, #16a34a); left: calc(50% - 131.5px); top: calc(50% - 131.5px); box-shadow: 0 0 30px rgba(74, 222, 128, 0.3);"
+            id="node-it" onclick="window.location.href='/network'">
             <span class="text-xs font-bold text-white">IT</span>
+            <div id="glance-it"
+                class="absolute -bottom-6 text-[9px] font-bold text-slate-300 bg-black/60 px-2 py-0.5 rounded border border-white/10 whitespace-nowrap pointer-events-none">
+                Resp: --ms</div>
             <div class="absolute inset-0 rounded-full border-2 border-white/20"></div>
             <!-- Mini metrics ring -->
             <svg class="absolute -inset-3 w-[calc(100%+24px)] h-[calc(100%+24px)] -rotate-90">
@@ -501,30 +527,37 @@
         </div>
 
         <!-- HR Node (Yellow - Warning) -->
-        <div class="node node-satellite animate-pulse"
-            style="background: radial-gradient(circle at 30% 30%, #facc15, #ca8a04); left: 72%; top: 18%; box-shadow: 0 0 30px rgba(250, 204, 21, 0.5);"
-            id="node-hr">
+        <div class="node node-satellite node-interactive animate-pulse"
+            style="background: radial-gradient(circle at 30% 30%, #facc15, #ca8a04); left: calc(50% + 56.5px); top: calc(50% - 131.5px); box-shadow: 0 0 30px rgba(250, 204, 21, 0.5);"
+            id="node-hr" onclick="window.location.href='/hr'">
             <span class="text-xs font-bold text-white">HR</span>
+            <div id="glance-hr"
+                class="absolute -bottom-6 text-[9px] font-bold text-slate-300 bg-black/60 px-2 py-0.5 rounded border border-white/10 whitespace-nowrap pointer-events-none">
+                Load: --%</div>
             <div class="absolute inset-0 rounded-full border-2 border-yellow-300/40"></div>
             <div class="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping"></div>
         </div>
 
         <!-- IoT Node (Red - Critical) -->
-        <div class="node node-satellite"
-            style="background: radial-gradient(circle at 30% 30%, #ef4444, #b91c1c); left: 18%; top: 72%; box-shadow: 0 0 40px rgba(239, 68, 68, 0.8); animation: pulse 1s ease-in-out infinite;"
-            id="node-iot">
+        <div class="node node-satellite node-interactive"
+            style="background: radial-gradient(circle at 30% 30%, #ef4444, #b91c1c); left: calc(50% - 131.5px); top: calc(50% + 56.5px); box-shadow: 0 0 40px rgba(239, 68, 68, 0.8);"
+            id="node-iot" onclick="window.location.href='/iot'">
             <span class="text-xs font-bold text-white">IoT</span>
+            <div id="glance-iot"
+                class="absolute -bottom-6 text-[9px] font-bold text-slate-300 bg-black/60 px-2 py-0.5 rounded border border-white/10 whitespace-nowrap pointer-events-none">
+                PDR: --%</div>
             <div class="absolute inset-0 rounded-full border-2 border-red-400/60"></div>
-            <div class="absolute -inset-2 rounded-full border border-red-500/30 animate-ping"></div>
-            <div class="absolute -inset-4 rounded-full border border-red-500/10 animate-ping"
-                style="animation-delay: 0.3s;"></div>
+            <div class="absolute -inset-2 rounded-full border border-red-500/30"></div>
         </div>
 
         <!-- Finance Node (Green - Stable) -->
-        <div class="node node-satellite"
-            style="background: radial-gradient(circle at 30% 30%, #4ade80, #16a34a); left: 72%; top: 72%; box-shadow: 0 0 30px rgba(74, 222, 128, 0.3);"
-            id="node-finance">
+        <div class="node node-satellite node-interactive"
+            style="background: radial-gradient(circle at 30% 30%, #4ade80, #16a34a); left: calc(50% + 56.5px); top: calc(50% + 56.5px); box-shadow: 0 0 30px rgba(74, 222, 128, 0.3);"
+            id="node-finance" onclick="window.location.href='/finance'">
             <span class="text-xs font-bold text-white">FIN</span>
+            <div id="glance-finance"
+                class="absolute -bottom-6 text-[9px] font-bold text-slate-300 bg-black/60 px-2 py-0.5 rounded border border-white/10 whitespace-nowrap pointer-events-none">
+                Time: --s</div>
             <div class="absolute inset-0 rounded-full border-2 border-white/20"></div>
             <svg class="absolute -inset-3 w-[calc(100%+24px)] h-[calc(100%+24px)] -rotate-90">
                 <circle cx="50%" cy="50%" r="30" stroke="rgba(255,255,255,0.1)" stroke-width="2" fill="none" />
@@ -871,19 +904,148 @@
 
         createDataStream();
 
-        // Update metrics in real-time (simulated)
-        setInterval(() => {
-            // Update IoT metrics (make it blink more)
-            const iotNode = document.getElementById('node-iot');
-            if (Math.random() > 0.7) {
-                iotNode.style.boxShadow = '0 0 60px rgba(239, 68, 68, 0.9)';
-                iotNode.style.transform = 'scale(1.05)';
-                setTimeout(() => {
-                    iotNode.style.boxShadow = '0 0 40px rgba(239, 68, 68, 0.8)';
-                    iotNode.style.transform = 'scale(1)';
-                }, 200);
+        // Initial Loading State
+        document.querySelectorAll('.node-satellite').forEach(node => {
+            node.style.filter = 'blur(4px)';
+            node.style.opacity = '0.6';
+        });
+
+        // Update metrics in real-time (fetching from backend)
+        async function fetchLiveStatus() {
+            try {
+                const response = await fetch('/api/v1/status');
+                const data = await response.json();
+
+                // End loading state
+                document.querySelectorAll('.node-satellite').forEach(node => {
+                    node.style.filter = '';
+                    node.style.opacity = '1';
+                });
+
+                // Update System Health
+                const riskScore = data.risk_probability * 100;
+                const healthScore = Math.max(0, 100 - riskScore).toFixed(0);
+                document.querySelector('.text-2xl.font-bold.text-white').innerHTML = `${healthScore}<span class="text-sm text-brand ml-1">%</span>`;
+
+                // Update Network Load
+                const networkLoad = data.metrics.hub.net_in;
+                const networkLoadPct = Math.min(100, Math.max(0, (networkLoad / 1000) * 100)).toFixed(0);
+                document.querySelectorAll('.text-2xl.font-bold.text-white')[1].innerHTML = `${networkLoadPct}<span class="text-sm text-brand ml-1">%</span>`;
+                document.querySelector('.metric-fill').style.width = `${networkLoadPct}%`;
+
+                // Theme / Alert state handling
+                const iotNode = document.getElementById('node-iot');
+                const hubNode = document.getElementById('central-node');
+                const finNode = document.getElementById('node-finance');
+                const mainBody = document.querySelector('body');
+                const navBar = document.querySelectorAll('.glass-premium')[0];
+                const navBarRight = document.querySelectorAll('.glass-premium')[1];
+
+                let activeThreatsHtml = '';
+
+                // Update Glance Metrics
+                document.getElementById('glance-it').innerText = `Resp: ${data.metrics.it.server_resp_time.toFixed(0)}ms`;
+                document.getElementById('glance-hr').innerText = `Load: ${data.metrics.hr.system_load.toFixed(1)}%`;
+                document.getElementById('glance-iot').innerText = `PDR: ${data.metrics.iot.pdr.toFixed(0)}%`;
+                document.getElementById('glance-finance').innerText = `Time: ${data.metrics.finance.db_query_duration.toFixed(1)}s`;
+
+                // Default reset styles
+                iotNode.style.boxShadow = '0 0 30px rgba(74, 222, 128, 0.3)';
+                iotNode.style.background = 'radial-gradient(circle at 30% 30%, #4ade80, #16a34a)';
+                iotNode.style.animation = 'none';
+                hubNode.style.boxShadow = '0 0 50px #1fc762';
+                finNode.style.boxShadow = '0 0 30px rgba(74, 222, 128, 0.3)';
+                mainBody.style.background = '#03050A';
+
+                // Real-Time Logic for PDR check regardless of global threat
+                if (data.metrics.iot.pdr < 90) {
+                    iotNode.style.boxShadow = '0 0 60px rgba(239, 68, 68, 0.9)';
+                    iotNode.style.background = 'radial-gradient(circle at 30% 30%, #ef4444, #b91c1c)';
+                    iotNode.style.animation = 'pulse 1s ease-in-out infinite';
+                    if (data.prediction !== 1) { // Will log here if it didn't trip global anomaly
+                        activeThreatsHtml += `
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-slate-400">IoT · PDR Dropping</span>
+                                <span class="text-red-400 font-medium">WARNING</span>
+                            </div>`;
+                    }
+                }
+
+                if (data.prediction === 1) { // Anomaly Detected
+                    document.body.classList.add('alert-active');
+                    // Convert theme to Warning Red
+                    document.body.style.background = '#1a0505'; // Dark red background tint
+                    navBar.style.border = '1px solid rgba(255, 68, 68, 0.5)';
+                    navBarRight.style.border = '1px solid rgba(255, 68, 68, 0.5)';
+
+                    // Heuristics for Active Threats
+                    if (data.metrics.iot.pdr < 90) {
+                        activeThreatsHtml += `
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-slate-400">IoT · Packet Loss</span>
+                                <span class="text-red-400 font-medium">CRITICAL</span>
+                            </div>`;
+                    }
+                    if (data.metrics.hub.cpu > 80) {
+                        hubNode.style.boxShadow = '0 0 60px rgba(239, 68, 68, 0.9)';
+                        activeThreatsHtml += `
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-slate-400">Core · CPU Spike</span>
+                                <span class="text-red-400 font-medium">CRITICAL</span>
+                            </div>`;
+                    }
+                    if (data.metrics.finance.db_query_duration > 10) {
+                        finNode.style.boxShadow = '0 0 60px rgba(239, 68, 68, 0.9)';
+                        activeThreatsHtml += `
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-slate-400">Fin · DB Latency</span>
+                                <span class="text-red-400 font-medium">HIGH</span>
+                            </div>`;
+                    }
+                    if (activeThreatsHtml === '') {
+                        activeThreatsHtml += `
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-slate-400">Network · General Anomaly</span>
+                                <span class="text-red-400 font-medium">WARNING</span>
+                            </div>`;
+                    }
+                } else {
+                    document.body.classList.remove('alert-active');
+                    navBar.style.border = '1px solid rgba(64, 224, 128, 0.15)';
+                    navBarRight.style.border = '1px solid rgba(64, 224, 128, 0.15)';
+                }
+
+                // Update Threats Panel
+                document.querySelectorAll('.glass-premium.p-5')[0].querySelector('.text-2xl.font-bold').innerText = (data.prediction === 1 ? '01' : '00');
+                const threatContainer = document.querySelectorAll('.glass-premium.p-5')[0].querySelector('.space-y-2');
+                threatContainer.innerHTML = activeThreatsHtml || '<div class="text-xs text-green-400">No active threats detected.</div>';
+
+                // Root Cause Panel Strings
+                document.querySelector('.text-sm.font-bold.text-white.mb-1').innerText = data.prediction === 1 ? "Anomaly Detected" : "System Normal";
+                document.querySelectorAll('.text-\\[10px\\].text-slate-400')[2].innerText = `Risk Probability: ${riskScore.toFixed(2)}%`;
+
+                const [hubCpuBar, responseBar, pdrBar] = document.querySelectorAll('.bg-white\\/10 .h-full');
+
+                if (hubCpuBar && responseBar && pdrBar) {
+                    hubCpuBar.style.width = `${Math.min(100, data.metrics.hub.cpu)}%`;
+                    hubCpuBar.parentElement.nextElementSibling.innerText = `${data.metrics.hub.cpu.toFixed(0)}%`;
+
+                    const respPct = Math.min(100, (data.metrics.it.server_resp_time / 100) * 100);
+                    responseBar.style.width = `${respPct}%`;
+                    responseBar.parentElement.nextElementSibling.innerText = `${data.metrics.it.server_resp_time.toFixed(0)}ms`;
+
+                    pdrBar.style.width = `${data.metrics.iot.pdr}%`;
+                    pdrBar.parentElement.nextElementSibling.innerText = `${data.metrics.iot.pdr.toFixed(0)}%`;
+                }
+
+            } catch (error) {
+                console.error("Error fetching live status:", error);
             }
-        }, 2000);
+        }
+
+        // Fetch initially and then every 2 seconds
+        fetchLiveStatus();
+        setInterval(fetchLiveStatus, 2000);
     </script>
 </body>
 

@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS · Giriş & Kayıt</title>
+
+    <!-- Fonts & Icons -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Three.js -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #03050A;
+            color: #fff;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Premium noise texture */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJmIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBudW1PY3RhdmVzPSIzIiAvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNmKSIgb3BhY2l0eT0iMC4wMjUiIC8+PC9zdmc+');
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Grid overlay - aynı tema */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(31, 199, 98, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(31, 199, 98, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* Glass morphism premium - tamamen aynı */
+        .glass-premium {
+            background: rgba(10, 20, 35, 0.4);
+            backdrop-filter: blur(20px) saturate(200%);
+            -webkit-backdrop-filter: blur(20px) saturate(200%);
+            border: 1px solid rgba(31, 199, 98, 0.2);
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(31, 199, 98, 0.15) inset,
+                0 0 40px rgba(31, 199, 98, 0.1);
+        }
+
+        .glass-premium-light {
+            background: rgba(20, 30, 45, 0.25);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+        }
+
+        /* Orbital rings - login için dekoratif */
+        .orbital-ring-outer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            border: 1px solid rgba(31, 199, 98, 0.1);
+            border-radius: 50%;
+            animation: rotateSlow 70s linear infinite reverse;
+            z-index: 1;
+        }
+
+        .orbital-ring-middle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 650px;
+            height: 650px;
+            border: 2px solid rgba(31, 199, 98, 0.15);
+            border-radius: 50%;
+            animation: rotateSlow 50s linear infinite;
+            z-index: 2;
+            box-shadow: 0 0 30px rgba(31, 199, 98, 0.1);
+        }
+
+        .orbital-ring-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            border: 2px dashed rgba(31, 199, 98, 0.2);
+            border-radius: 50%;
+            animation: rotateReverse 35s linear infinite;
+            z-index: 3;
+            box-shadow: 0 0 20px rgba(31, 199, 98, 0.1);
+        }
+
+        @keyframes rotateSlow {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        @keyframes rotateReverse {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(-360deg);
+            }
+        }
+
+        /* Data particles - login için */
+        .data-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #1fc762;
+            border-radius: 50%;
+            filter: blur(1.5px);
+            animation: flowParticle 8s linear infinite;
+            pointer-events: none;
+            z-index: 4;
+            box-shadow: 0 0 15px #1fc762;
+        }
+
+        @keyframes flowParticle {
+            0% {
+                opacity: 0;
+                transform: translate(0, 0) scale(1);
+            }
+
+            10% {
+                opacity: 0.8;
+                transform: translate(100px, 100px) scale(2);
+            }
+
+            90% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(300px, 300px) scale(0.5);
+            }
+        }
+
+        /* Canvas for particles */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Form input styles */
+        .input-field {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 16px 20px;
+            color: white;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: rgba(31, 199, 98, 0.5);
+            box-shadow: 0 0 0 3px rgba(31, 199, 98, 0.1);
+            background: rgba(31, 199, 98, 0.02);
+        }
+
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 300;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus+.input-icon {
+            color: #1fc762;
+        }
+
+        /* Toggle switch */
+        .toggle-container {
+            display: flex;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 40px;
+            padding: 6px;
+            margin-bottom: 30px;
+        }
+
+        .toggle-option {
+            flex: 1;
+            text-align: center;
+            padding: 12px 0;
+            border-radius: 32px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .toggle-option.active {
+            background: rgba(31, 199, 98, 0.15);
+            color: #1fc762;
+            box-shadow: 0 0 20px rgba(31, 199, 98, 0.2);
+        }
+
+        /* Login button */
+        .login-button {
+            width: 100%;
+            background: linear-gradient(135deg, #1fc762, #0a8a40);
+            border: none;
+            border-radius: 16px;
+            padding: 16px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -10px rgba(31, 199, 98, 0.5);
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -10px rgba(31, 199, 98, 0.7);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .login-button::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to bottom right,
+                    rgba(255, 255, 255, 0.2) 0%,
+                    transparent 50%,
+                    transparent 100%);
+            transform: rotate(30deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%) rotate(30deg);
+            }
+
+            100% {
+                transform: translateX(100%) rotate(30deg);
+            }
+        }
+
+        /* Social login buttons */
+        .social-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.6);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .social-button:hover {
+            border-color: rgba(31, 199, 98, 0.4);
+            color: #1fc762;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -10px rgba(31, 199, 98, 0.3);
+        }
+
+        /* Floating shapes - login için dekoratif */
+        .floating-shape {
+            position: absolute;
+            background: rgba(31, 199, 98, 0.03);
+            border: 1px solid rgba(31, 199, 98, 0.1);
+            border-radius: 50%;
+            filter: blur(40px);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .shape-1 {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            right: -100px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .shape-2 {
+            width: 300px;
+            height: 300px;
+            bottom: -50px;
+            left: -50px;
+            animation: float 25s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(30px, 30px) scale(1.1);
+            }
+        }
+
+        /* Brand logo */
+        .brand-logo {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at 30% 30%, #4ade80, #0a8a40);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px #1fc762;
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 30px #1fc762;
+            }
+
+            50% {
+                box-shadow: 0 0 50px #1fc762;
+            }
+        }
+
+        /* Form container */
+        .form-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 460px;
+            padding: 20px;
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 12px;
+            margin: 20px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .divider::before {
+            margin-right: 16px;
+        }
+
+        .divider::after {
+            margin-left: 16px;
+        }
+
+        /* Form transition */
+        .form-section {
+            transition: all 0.4s ease;
+        }
+
+        .hidden-form {
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .visible-form {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Particle Canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Grid Overlay -->
+    <div class="grid-overlay"></div>
+
+    <!-- Floating decorative shapes -->
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+
+    <!-- Orbital rings (decorative) -->
+    <div class="orbital-ring-outer"></div>
+    <div class="orbital-ring-middle"></div>
+    <div class="orbital-ring-inner"></div>
+
+    <!-- Data particles container -->
+    <div id="particle-container" class="absolute inset-0 pointer-events-none" style="z-index: 4;"></div>
+
+    <!-- Main content -->
+    <div class="min-h-screen flex items-center justify-center relative z-10">
+        <div class="form-container">
+            <!-- Brand -->
+            <div class="text-center mb-8">
+                <div class="brand-logo mx-auto">
+                    <i class="fas fa-brain text-white text-2xl"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-white mt-4">NEXUS·AI</h1>
+                <p class="text-sm text-slate-400 mt-1">Anomaly Detection Platform</p>
+            </div>
+
+            <!-- Glass card -->
+            <div class="glass-premium p-8">
+                <!-- Toggle Switch -->
+                <div class="toggle-container" id="toggleContainer">
+                    <div class="toggle-option active" id="loginToggle">Giriş Yap</div>
+                    <div class="toggle-option" id="registerToggle">Kayıt Ol</div>
+                </div>
+
+                <!-- Login Form -->
+                <div id="loginForm" class="form-section visible-form">
+                    <form onsubmit="event.preventDefault(); window.location.href='/dashboard';">
+                        <div class="space-y-5">
+                            <!-- Email -->
+                            <div class="relative">
+                                <i class="fas fa-envelope input-icon"></i>
+                                <input type="email" placeholder="E-posta adresiniz" class="input-field pl-12">
+                            </div>
+
+                            <!-- Password -->
+                            <div class="relative">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input type="password" placeholder="Şifreniz" class="input-field pl-12">
+                            </div>
+
+                            <!-- Remember me & Forgot password -->
+                            <div class="flex items-center justify-between">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox"
+                                        class="w-4 h-4 rounded border-white/20 bg-white/5 checked:bg-brand focus:ring-brand/50 text-brand">
+                                    <span class="ml-2 text-sm text-slate-400">Beni hatırla</span>
+                                </label>
+                                <a href="#" class="text-sm text-brand hover:text-brand/80 transition">Şifremi
+                                    unuttum</a>
+                            </div>
+
+                            <!-- Login Button -->
+                            <button type="submit" class="login-button">
+                                <i class="fas fa-arrow-right-to-bracket mr-2"></i>
+                                Giriş Yap
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Social Login -->
+                    <div class="mt-6">
+                        <div class="divider">veya</div>
+                        <div class="flex justify-center gap-4">
+                            <div class="social-button">
+                                <i class="fab fa-google"></i>
+                            </div>
+                            <div class="social-button">
+                                <i class="fab fa-github"></i>
+                            </div>
+                            <div class="social-button">
+                                <i class="fab fa-microsoft"></i>
+                            </div>
+                            <div class="social-button">
+                                <i class="fab fa-linkedin-in"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Demo credentials -->
+                    <div class="mt-6 p-4 bg-white/5 rounded-xl border border-white/10">
+                        <p class="text-xs text-slate-400 flex items-center gap-2">
+                            <i class="fas fa-info-circle text-brand"></i>
+                            Demo için: demo@nexus.ai / nexus123
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Register Form -->
+                <div id="registerForm" class="form-section hidden-form">
+                    <form onsubmit="event.preventDefault();">
+                        <div class="space-y-5">
+                            <!-- Name -->
+                            <div class="relative">
+                                <i class="fas fa-user input-icon"></i>
+                                <input type="text" placeholder="Adınız Soyadınız" class="input-field pl-12">
+                            </div>
+
+                            <!-- Email -->
+                            <div class="relative">
+                                <i class="fas fa-envelope input-icon"></i>
+                                <input type="email" placeholder="E-posta adresiniz" class="input-field pl-12">
+                            </div>
+
+                            <!-- Password -->
+                            <div class="relative">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input type="password" placeholder="Şifreniz" class="input-field pl-12">
+                            </div>
+
+                            <!-- Confirm Password -->
+                            <div class="relative">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input type="password" placeholder="Şifre tekrar" class="input-field pl-12">
+                            </div>
+
+                            <!-- Terms -->
+                            <label class="flex items-start cursor-pointer">
+                                <input type="checkbox"
+                                    class="w-4 h-4 mt-0.5 rounded border-white/20 bg-white/5 checked:bg-brand focus:ring-brand/50 text-brand">
+                                <span class="ml-2 text-sm text-slate-400">
+                                    <a href="#" class="text-brand hover:text-brand/80">Kullanım koşulları</a>'nı ve
+                                    <a href="#" class="text-brand hover:text-brand/80">gizlilik politikası</a>'nı kabul
+                                    ediyorum
+                                </span>
+                            </label>
+
+                            <!-- Register Button -->
+                            <button type="submit" class="login-button">
+                                <i class="fas fa-user-plus mr-2"></i>
+                                Kayıt Ol
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Social Register -->
+                    <div class="mt-6">
+                        <div class="divider">veya</div>
+                        <div class="flex justify-center gap-4">
+                            <div class="social-button">
+                                <i class="fab fa-google"></i>
+                            </div>
+                            <div class="social-button">
+                                <i class="fab fa-github"></i>
+                            </div>
+                            <div class="social-button">
+                                <i class="fab fa-microsoft"></i>
+                            </div>
+                            <div class="social-button">
+                                <i class="fab fa-linkedin-in"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center mt-6">
+                <p class="text-xs text-slate-500">
+                    © 2026 NEXUS·AI. Tüm hakları saklıdır.
+                    <span class="mx-2">·</span>
+                    <a href="#" class="hover:text-brand transition">Yardım</a>
+                    <span class="mx-2">·</span>
+                    <a href="#" class="hover:text-brand transition">Gizlilik</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Three.js Particle System - tamamen aynı
+        import * as THREE from 'three';
+
+        const canvas = document.getElementById('particle-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 2000;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for (let i = 0; i < particlesCount * 3; i += 3) {
+            const radius = 20 + Math.random() * 15;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos((Math.random() * 2) - 1);
+
+            posArray[i] = radius * Math.sin(phi) * Math.cos(theta);
+            posArray[i + 1] = radius * Math.sin(phi) * Math.sin(theta) * 0.4;
+            posArray[i + 2] = radius * Math.cos(phi);
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.12,
+            color: '#1fc762',
+            transparent: true,
+            opacity: 0.25,
+            blending: THREE.AdditiveBlending
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        camera.position.z = 25;
+        camera.position.y = 3;
+        camera.lookAt(0, 0, 0);
+
+        let mouseX = 0, mouseY = 0;
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX / window.innerWidth - 0.5) * 2;
+            mouseY = (event.clientY / window.innerHeight - 0.5) * 2;
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            particlesMesh.rotation.y += 0.0003;
+            particlesMesh.rotation.x += 0.0001;
+            particlesMesh.rotation.y += mouseX * 0.0003;
+            particlesMesh.rotation.x += mouseY * 0.0002;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Data particles
+        function createDataParticles() {
+            const container = document.getElementById('particle-container');
+            if (!container) return;
+
+            setInterval(() => {
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        particle.className = 'data-particle';
+
+                        const angle = Math.random() * Math.PI * 2;
+                        const distance = 100 + Math.random() * 200;
+                        particle.style.left = '50%';
+                        particle.style.top = '50%';
+                        particle.style.transform = `translate(-50%, -50%) rotate(${angle}rad) translateX(${distance}px)`;
+
+                        container.appendChild(particle);
+                        setTimeout(() => particle.remove(), 8000);
+                    }, i * 200);
+                }
+            }, 3000);
+        }
+        createDataParticles();
+
+        // Toggle between login and register
+        const loginToggle = document.getElementById('loginToggle');
+        const registerToggle = document.getElementById('registerToggle');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+
+        loginToggle.addEventListener('click', () => {
+            loginToggle.classList.add('active');
+            registerToggle.classList.remove('active');
+
+            loginForm.classList.remove('hidden-form');
+            loginForm.classList.add('visible-form');
+            registerForm.classList.remove('visible-form');
+            registerForm.classList.add('hidden-form');
+        });
+
+        registerToggle.addEventListener('click', () => {
+            registerToggle.classList.add('active');
+            loginToggle.classList.remove('active');
+
+            registerForm.classList.remove('hidden-form');
+            registerForm.classList.add('visible-form');
+            loginForm.classList.remove('visible-form');
+            loginForm.classList.add('hidden-form');
+        });
+
+        // Smooth input animations
+        const inputs = document.querySelectorAll('.input-field');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.querySelector('.input-icon').style.color = '#1fc762';
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.querySelector('.input-icon').style.color = 'rgba(255, 255, 255, 0.3)';
+            });
+        });
+    </script>
+</body>
+
+</html>
