@@ -404,19 +404,23 @@
 
         /* Chart containers */
         .chart-card {
-            background: rgba(10, 20, 35, 0.6);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(31, 199, 98, 0.15);
+            background: rgba(10, 15, 25, 0.4);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(64, 224, 128, 0.15);
             border-radius: 24px;
-            padding: 24px;
+            padding: 20px;
             transition: all 0.3s ease;
             height: 100%;
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(64, 224, 128, 0.1) inset,
+                0 0 30px -10px rgba(64, 224, 128, 0.3);
+            overflow: hidden;
         }
 
         .chart-card:hover {
-            border-color: rgba(31, 199, 98, 0.4);
-            box-shadow: 0 30px 50px -20px rgba(31, 199, 98, 0.2);
+            border-color: rgba(64, 224, 128, 0.4);
+            box-shadow: 0 30px 50px -20px rgba(64, 224, 128, 0.2);
             transform: translateY(-5px);
         }
 
@@ -1136,8 +1140,12 @@
             return data;
         }
 
+        // Store for responsive redrawing
+        window.responsiveChartStore = window.responsiveChartStore || {};
+
         // Draw line chart
         function drawLineChart(containerId, data, color, area = false) {
+            window.responsiveChartStore[containerId] = { type: 'line', data, color, area };
             const container = document.getElementById(containerId);
             if (!container) return;
 
@@ -1151,7 +1159,16 @@
                 .append("svg")
                 .attr("width", width)
                 .attr("height", height)
-                .style("overflow", "visible");
+                .style("overflow", "hidden");
+
+            // Add clipPath to restrict drawing inside axes area
+            svg.append("defs").append("clipPath")
+                .attr("id", "clip-" + containerId)
+                .append("rect")
+                .attr("x", margin.left)
+                .attr("y", 0)
+                .attr("width", width - margin.left - margin.right)
+                .attr("height", height);
 
             const x = d3.scaleLinear()
                 .domain([0, data.length - 1])
@@ -1188,8 +1205,11 @@
                 .y(d => y(d.value))
                 .curve(d3.curveMonotoneX);
 
+            // Use clip-path on the actual data drawings
+            const chartArea = svg.append("g").attr("clip-path", `url(#clip-${containerId})`);
+
             if (area) {
-                svg.append("path")
+                chartArea.append("path")
                     .datum(data)
                     .attr("fill", color)
                     .attr("fill-opacity", 0.2)
@@ -1201,7 +1221,7 @@
                     );
             }
 
-            svg.append("path")
+            chartArea.append("path")
                 .datum(data)
                 .attr("fill", "none")
                 .attr("stroke", color)
@@ -1211,7 +1231,7 @@
                 .attr("filter", "drop-shadow(0 0 6px " + color + ")");
 
             // Data points
-            svg.selectAll("circle")
+            chartArea.selectAll("circle")
                 .data(data)
                 .enter()
                 .append("circle")
@@ -1226,6 +1246,7 @@
 
         // Draw donut chart
         function drawDonutChart(containerId, data, colors) {
+            window.responsiveChartStore[containerId] = { type: 'donut', data, colors };
             const container = document.getElementById(containerId);
             if (!container) return;
 
@@ -1272,6 +1293,7 @@
 
         // Draw heatmap (simplified)
         function drawHeatmap(containerId) {
+            window.responsiveChartStore[containerId] = { type: 'heatmap' };
             const container = document.getElementById(containerId);
             if (!container) return;
 
@@ -1363,9 +1385,17 @@
         let realData_resptime = generateTimeSeriesData(24, 45, 94, 0.4);
 
         // Update charts on resize
-        window.addEventListener('resize', () => {
-            // Let it just gracefully stay or we can use generic resize handlers, avoiding reload
+        const chartResizeObserver = new ResizeObserver(() => {
+            clearTimeout(window.chartResizeTimer);
+            window.chartResizeTimer = setTimeout(() => {
+                for (const [id, config] of Object.entries(window.responsiveChartStore)) {
+                    if (config.type === 'line') drawLineChart(id, config.data, config.color, config.area);
+                    else if (config.type === 'donut') drawDonutChart(id, config.data, config.colors);
+                    else if (config.type === 'heatmap') drawHeatmap(id);
+                }
+            }, 100);
         });
+        document.querySelectorAll('.chart-card').forEach(card => chartResizeObserver.observe(card));
 
         const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const socket = new WebSocket(`${wsProtocol}//${window.location.host}/ws/stream`);
