@@ -1,23 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS · FINANCE ERP DEEP DIVE · ANALYTICS</title>
-
+    <title>NEXUS · HR DEEP DIVE · ANALYTICS</title>
+    
     <!-- Fonts & Icons -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-
+    
     <!-- D3.js -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
-
+    
     <!-- Three.js -->
     <script type="importmap">
         {
@@ -26,7 +23,7 @@
             }
         }
     </script>
-
+    
     <style>
         * {
             margin: 0;
@@ -58,31 +55,31 @@
             z-index: 1000;
         }
 
-        /* Grid overlay - finans için altın tonları */
+        /* Grid overlay - HR için mor tonları */
         .grid-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image:
-                linear-gradient(rgba(255, 215, 0, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 215, 0, 0.03) 1px, transparent 1px);
+            background-image: 
+                linear-gradient(rgba(168, 85, 247, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(168, 85, 247, 0.03) 1px, transparent 1px);
             background-size: 40px 40px;
             pointer-events: none;
             z-index: 5;
         }
 
-        /* Glass morphism premium - finans için altın vurgulu */
+        /* Glass morphism premium - HR için mor vurgulu */
         .glass-premium {
             background: rgba(10, 20, 35, 0.4);
             backdrop-filter: blur(20px) saturate(200%);
             -webkit-backdrop-filter: blur(20px) saturate(200%);
-            border: 1px solid rgba(255, 215, 0, 0.2);
+            border: 1px solid rgba(168, 85, 247, 0.2);
             border-radius: 28px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8),
-                0 0 0 1px rgba(255, 215, 0, 0.15) inset,
-                0 0 40px rgba(255, 215, 0, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 
+                        0 0 0 1px rgba(168, 85, 247, 0.15) inset,
+                        0 0 40px rgba(168, 85, 247, 0.1);
         }
 
         .glass-premium-light {
@@ -93,13 +90,13 @@
             border-radius: 24px;
         }
 
-        /* Finance Node (Primary) - altın renk */
-        .node-finance-primary {
+        /* HR Node (Primary) - mor renk */
+        .node-hr-primary {
             position: absolute;
             width: 180px;
             height: 180px;
-            background: radial-gradient(circle at 30% 30%, #FFD700, #B8860B);
-            box-shadow: 0 0 80px #FFD700, 0 0 150px rgba(255, 215, 0, 0.5), 0 0 200px rgba(255, 215, 0, 0.2);
+            background: radial-gradient(circle at 30% 30%, #a855f7, #6b21a5);
+            box-shadow: 0 0 80px #a855f7, 0 0 150px rgba(168, 85, 247, 0.5), 0 0 200px rgba(168, 85, 247, 0.2);
             left: calc(50% - 90px);
             top: calc(50% - 90px);
             border: 3px solid rgba(255, 255, 255, 0.5);
@@ -110,22 +107,15 @@
             justify-content: center;
             transition: all 0.3s ease;
             cursor: pointer;
-            animation: financePulse 4s ease-in-out infinite;
+            animation: hrPulse 4s ease-in-out infinite;
         }
 
-        @keyframes financePulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.02);
-            }
+        @keyframes hrPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
         }
 
-        .node-finance-primary::before {
+        .node-hr-primary::before {
             content: "";
             position: absolute;
             width: 200%;
@@ -133,12 +123,12 @@
             top: -50%;
             left: -50%;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.3) 0%, transparent 70%);
             z-index: -1;
             animation: glowPulse 3s ease-in-out infinite;
         }
 
-        .node-finance-primary::after {
+        .node-hr-primary::after {
             content: "";
             position: absolute;
             width: 220%;
@@ -146,30 +136,21 @@
             top: -60%;
             left: -60%;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
             z-index: -2;
             animation: glowPulse 4s ease-in-out infinite reverse;
         }
 
         @keyframes glowPulse {
-
-            0%,
-            100% {
-                opacity: 0.4;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.8;
-                transform: scale(1.1);
-            }
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
         }
 
-        /* Metric nodes - finans metrikleri */
+        /* Metric nodes - HR metrikleri */
         .metric-node {
             position: absolute;
-            width: 110px;
-            height: 110px;
+            width: 130px;
+            height: 130px;
             border-radius: 50%;
             display: flex;
             flex-direction: column;
@@ -188,79 +169,44 @@
         .metric-node:hover {
             transform: scale(1.25) translateY(-10px);
             z-index: 100;
-            border-color: rgba(255, 215, 0, 0.7);
-            box-shadow: 0 30px 50px -15px rgba(255, 215, 0, 0.4);
+            border-color: rgba(168, 85, 247, 0.7);
+            box-shadow: 0 30px 50px -15px rgba(168, 85, 247, 0.4);
         }
 
-        /* Sensör metrikleri için özel renkler */
-        .metric-node.sensor-temp {
-            box-shadow: 0 0 50px rgba(239, 68, 68, 0.6), 0 20px 40px -15px rgba(0, 0, 0, 0.6);
-            animation: tempPulse 2s ease-in-out infinite;
+        /* HR metrikleri için özel renkler */
+        .metric-node.login-logout { 
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.6), 0 20px 40px -15px rgba(0, 0, 0, 0.6); 
+            animation: loginPulse 3s ease-in-out infinite;
+        }
+        .metric-node.app-usage { 
+            box-shadow: 0 0 50px rgba(34, 197, 94, 0.6), 0 20px 40px -15px rgba(0, 0, 0, 0.6); 
+        }
+        .metric-node.helpdesk { 
+            box-shadow: 0 0 50px rgba(239, 68, 68, 0.6), 0 20px 40px -15px rgba(0, 0, 0, 0.6); 
+            animation: helpdeskPulse 1.5s ease-in-out infinite;
         }
 
-        .metric-node.vibration {
-            box-shadow: 0 0 50px rgba(168, 85, 247, 0.6), 0 20px 40px -15px rgba(0, 0, 0, 0.6);
-            animation: vibrationPulse 2.5s ease-in-out infinite;
+        @keyframes loginPulse {
+            0%, 100% { box-shadow: 0 0 50px rgba(59, 130, 246, 0.6); }
+            50% { box-shadow: 0 0 80px rgba(59, 130, 246, 0.9); }
         }
 
-        .metric-node.power {
-            box-shadow: 0 0 50px rgba(34, 197, 94, 0.6), 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+        @keyframes helpdeskPulse {
+            0%, 100% { box-shadow: 0 0 50px rgba(239, 68, 68, 0.6); transform: scale(1); }
+            50% { box-shadow: 0 0 80px rgba(239, 68, 68, 0.9); transform: scale(1.02); }
         }
 
-        .metric-node.cycle {
-            box-shadow: 0 0 50px rgba(59, 130, 246, 0.6), 0 20px 40px -15px rgba(0, 0, 0, 0.6);
-            animation: cyclePulse 3s ease-in-out infinite;
-        }
-
-        @keyframes tempPulse {
-
-            0%,
-            100% {
-                box-shadow: 0 0 50px rgba(239, 68, 68, 0.6);
-            }
-
-            50% {
-                box-shadow: 0 0 80px rgba(239, 68, 68, 0.9);
-            }
-        }
-
-        @keyframes vibrationPulse {
-
-            0%,
-            100% {
-                box-shadow: 0 0 50px rgba(168, 85, 247, 0.6);
-                transform: scale(1);
-            }
-
-            50% {
-                box-shadow: 0 0 80px rgba(168, 85, 247, 0.9);
-                transform: scale(1.02);
-            }
-        }
-
-        @keyframes cyclePulse {
-
-            0%,
-            100% {
-                box-shadow: 0 0 50px rgba(59, 130, 246, 0.6);
-            }
-
-            50% {
-                box-shadow: 0 0 80px rgba(59, 130, 246, 0.9);
-            }
-        }
-
-        /* Connection lines - altın rengi */
+        /* Connection lines - mor renk */
         .connection-line {
             position: absolute;
             height: 3px;
-            background: linear-gradient(90deg, transparent, #FFD700, #FFD700, #FFD700, transparent);
+            background: linear-gradient(90deg, transparent, #a855f7, #a855f7, #a855f7, transparent);
             transform-origin: left center;
             pointer-events: none;
             z-index: 20;
             opacity: 0.7;
             transition: opacity 0.3s ease;
-            filter: drop-shadow(0 0 12px #FFD700) blur(0.5px);
+            filter: drop-shadow(0 0 12px #a855f7) blur(0.5px);
             border-radius: 3px;
         }
 
@@ -272,7 +218,7 @@
             transform: translateX(-50%) translateY(-15px);
             background: rgba(8, 18, 28, 0.98);
             backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 215, 0, 0.4);
+            border: 1px solid rgba(168, 85, 247, 0.4);
             border-radius: 20px;
             padding: 16px 20px;
             min-width: 260px;
@@ -290,7 +236,7 @@
             transform: translateX(-50%) translateY(-25px);
         }
 
-        /* Orbital rings - altın renk */
+        /* Orbital rings - mor renk */
         .orbital-ring-extra {
             position: absolute;
             top: 50%;
@@ -298,7 +244,7 @@
             transform: translate(-50%, -50%);
             width: 750px;
             height: 750px;
-            border: 1px solid rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.1);
             border-radius: 50%;
             animation: rotateSlow 70s linear infinite reverse;
             z-index: 8;
@@ -311,79 +257,55 @@
             transform: translate(-50%, -50%);
             width: 650px;
             height: 650px;
-            border: 2px solid rgba(255, 215, 0, 0.15);
+            border: 2px solid rgba(168, 85, 247, 0.15);
             border-radius: 50%;
             animation: rotateSlow 50s linear infinite;
             z-index: 10;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.1);
         }
 
         .orbital-ring-inner {
             width: 550px;
             height: 550px;
-            border: 2px dashed rgba(255, 215, 0, 0.2);
+            border: 2px dashed rgba(168, 85, 247, 0.2);
             border-radius: 50%;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             animation: rotateReverse 35s linear infinite;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.1);
         }
 
         @keyframes rotateSlow {
-            from {
-                transform: translate(-50%, -50%) rotate(0deg);
-            }
-
-            to {
-                transform: translate(-50%, -50%) rotate(360deg);
-            }
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
         @keyframes rotateReverse {
-            from {
-                transform: translate(-50%, -50%) rotate(0deg);
-            }
-
-            to {
-                transform: translate(-50%, -50%) rotate(-360deg);
-            }
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(-360deg); }
         }
 
-        /* Data particles - altın rengi */
+        /* Data particles - mor renk */
         .data-particle {
             position: absolute;
             width: 4px;
             height: 4px;
-            background: #FFD700;
+            background: #a855f7;
             border-radius: 50%;
             filter: blur(1.5px);
             animation: flowParticle 5s linear infinite;
             pointer-events: none;
             z-index: 12;
-            box-shadow: 0 0 15px #FFD700;
+            box-shadow: 0 0 15px #a855f7;
         }
 
         @keyframes flowParticle {
-            0% {
-                opacity: 0;
-                transform: translate(0, 0) scale(1);
-            }
-
-            10% {
-                opacity: 1;
-                transform: translate(40px, 40px) scale(2);
-            }
-
-            90% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0;
-                transform: translate(150px, 150px) scale(0.8);
-            }
+            0% { opacity: 0; transform: translate(0, 0) scale(1); }
+            10% { opacity: 1; transform: translate(40px, 40px) scale(2); }
+            90% { opacity: 1; }
+            100% { opacity: 0; transform: translate(150px, 150px) scale(0.8); }
         }
 
         /* Canvas for particles */
@@ -434,7 +356,7 @@
         .chart-card {
             background: rgba(10, 20, 35, 0.6);
             backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.15);
             border-radius: 24px;
             padding: 24px;
             transition: all 0.3s ease;
@@ -443,8 +365,8 @@
         }
 
         .chart-card:hover {
-            border-color: rgba(255, 215, 0, 0.4);
-            box-shadow: 0 30px 50px -20px rgba(255, 215, 0, 0.2);
+            border-color: rgba(168, 85, 247, 0.4);
+            box-shadow: 0 30px 50px -20px rgba(168, 85, 247, 0.2);
             transform: translateY(-5px);
         }
 
@@ -462,7 +384,7 @@
             font-size: 12px;
             color: #94a3b8;
             margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             padding-bottom: 12px;
         }
 
@@ -475,7 +397,7 @@
             z-index: 200;
             background: rgba(10, 20, 35, 0.6);
             backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            border: 1px solid rgba(168, 85, 247, 0.3);
             border-radius: 40px;
             padding: 12px 24px;
             display: flex;
@@ -485,19 +407,12 @@
             animation: bounce 2s infinite;
             color: white;
             font-size: 14px;
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
         }
 
         @keyframes bounce {
-
-            0%,
-            100% {
-                transform: translateX(-50%) translateY(0);
-            }
-
-            50% {
-                transform: translateX(-50%) translateY(10px);
-            }
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
         }
 
         /* Back button */
@@ -511,22 +426,22 @@
             border-radius: 50%;
             background: rgba(10, 20, 35, 0.6);
             backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 215, 0, 0.4);
+            border: 1px solid rgba(168, 85, 247, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
         }
 
         .back-button:hover {
             transform: scale(1.15);
-            border-color: rgba(255, 215, 0, 1);
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
+            border-color: rgba(168, 85, 247, 1);
+            box-shadow: 0 0 40px rgba(168, 85, 247, 0.5);
         }
 
-        /* Info panel - finans için */
+        /* Info panel - HR için */
         .info-panel {
             position: fixed;
             right: 35px;
@@ -539,15 +454,8 @@
         }
 
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50%) translateX(60px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(-50%) translateX(0);
-            }
+            from { opacity: 0; transform: translateY(-50%) translateX(60px); }
+            to { opacity: 1; transform: translateY(-50%) translateX(0); }
         }
 
         .metric-indicator {
@@ -562,8 +470,8 @@
         }
 
         .metric-indicator:hover {
-            background: rgba(255, 215, 0, 0.08);
-            border-color: rgba(255, 215, 0, 0.3);
+            background: rgba(168, 85, 247, 0.08);
+            border-color: rgba(168, 85, 247, 0.3);
             transform: translateX(-5px);
         }
 
@@ -596,18 +504,12 @@
         }
 
         @keyframes shimmer {
-            0% {
-                transform: translateX(-100%);
-            }
-
-            100% {
-                transform: translateX(100%);
-            }
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         /* D3 chart customization */
-        .axis path,
-        .axis line {
+        .axis path, .axis line {
             stroke: rgba(148, 163, 184, 0.2);
         }
 
@@ -628,14 +530,14 @@
             position: absolute;
             background: rgba(10, 20, 35, 0.95);
             backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            border: 1px solid rgba(168, 85, 247, 0.3);
             border-radius: 12px;
             padding: 8px 12px;
             color: white;
             font-size: 12px;
             pointer-events: none;
             z-index: 1000;
-            box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 20px -10px rgba(0,0,0,0.5);
         }
 
         /* Time indicator */
@@ -646,7 +548,7 @@
             transform: translateX(-50%);
             background: rgba(10, 20, 35, 0.6);
             backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            border: 1px solid rgba(168, 85, 247, 0.3);
             border-radius: 50px;
             padding: 12px 30px;
             display: flex;
@@ -659,7 +561,7 @@
         /* Chart grid layout */
         .charts-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 24px;
             margin-bottom: 24px;
         }
@@ -671,7 +573,6 @@
         }
     </style>
 </head>
-
 <body>
 
     <!-- Particle Canvas -->
@@ -682,85 +583,69 @@
 
     <!-- Back Button -->
     <div class="back-button" onclick="window.location.href='#'" id="backBtn">
-        <i class="fas fa-arrow-left text-[#FFD700] text-2xl"></i>
+        <i class="fas fa-arrow-left text-[#a855f7] text-2xl"></i>
     </div>
 
-    <!-- Top Navigation (fixed) - finans için -->
+    <!-- Top Navigation (fixed) - HR için -->
     <div class="fixed top-6 left-1/2 transform -translate-x-1/2 z-200">
         <div class="glass-premium px-10 py-4 flex items-center gap-10">
             <div class="flex items-center gap-4">
-                <div class="w-3 h-3 rounded-full bg-[#FFD700] animate-pulse"></div>
-                <span class="text-base font-semibold text-white tracking-wider">FINANCE ERP DEEP DIVE</span>
+                <div class="w-3 h-3 rounded-full bg-[#a855f7] animate-pulse"></div>
+                <span class="text-base font-semibold text-white tracking-wider">HR DEEP DIVE</span>
             </div>
             <div class="h-5 w-px bg-white/20"></div>
             <div class="flex items-center gap-3">
-                <i class="fas fa-shield-alt text-[#FFD700] text-sm"></i>
-                <span class="text-sm text-slate-300">Gold Shield · Active</span>
+                <i class="fas fa-shield-alt text-[#a855f7] text-sm"></i>
+                <span class="text-sm text-slate-300">HR Shield · Active</span>
             </div>
         </div>
     </div>
 
-    <!-- Right Info Panel (fixed) - finans metrikleri -->
+    <!-- Right Info Panel (fixed) - HR metrikleri -->
     <div class="info-panel">
         <div class="glass-premium p-7">
             <h2 class="text-xl font-bold text-white mb-1 flex items-center gap-2">
-                <i class="fas fa-chart-line text-[#FFD700]"></i>
-                Finance ERP Overview
+                <i class="fas fa-users text-[#a855f7]"></i>
+                HR Overview
             </h2>
-            <p class="text-sm text-slate-400 mb-5">Real-time sensor metrics</p>
+            <p class="text-sm text-slate-400 mb-5">Real-time employee metrics</p>
 
             <!-- Overall Health Score -->
             <div class="mb-5 p-5 bg-white/5 rounded-xl border border-white/10">
                 <div class="flex justify-between items-center mb-3">
                     <span class="text-sm text-slate-300">System Health</span>
-                    <span class="text-2xl font-bold text-[#FFD700]">86%</span>
+                    <span class="text-2xl font-bold text-[#a855f7]">85%</span>
                 </div>
                 <div class="progress-bar">
-                    <div class="progress-fill bg-[#FFD700]" style="width: 86%;"></div>
+                    <div class="progress-fill bg-[#a855f7]" style="width: 85%;"></div>
                 </div>
             </div>
 
-            <!-- Sensor Metrics List -->
+            <!-- HR Metrics List -->
             <div class="space-y-3">
                 <div class="metric-indicator">
-                    <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
-                        <i class="fas fa-temperature-high text-red-400"></i>
+                    <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+                        <i class="fas fa-right-to-bracket text-blue-400"></i>
                     </div>
                     <div class="flex-1">
                         <div class="flex justify-between items-center">
-                            <span class="text-sm text-white">Sensor Temp</span>
-                            <span class="text-sm font-bold text-red-400">78°C</span>
+                            <span class="text-sm text-white">Login/Logout</span>
+                            <span class="text-sm font-bold text-blue-400">847</span>
                         </div>
                         <div class="flex items-center gap-3 mt-1">
-                            <span class="text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-300">Critical</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="metric-indicator">
-                    <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
-                        <i class="fas fa-wave-square text-purple-400"></i>
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-white">Vibration Level</span>
-                            <span class="text-sm font-bold text-purple-400">2.4 mm/s</span>
-                        </div>
-                        <div class="flex items-center gap-3 mt-1">
-                            <span
-                                class="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">Warning</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300">Active</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="metric-indicator">
                     <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
-                        <i class="fas fa-bolt text-green-400"></i>
+                        <i class="fas fa-laptop text-green-400"></i>
                     </div>
                     <div class="flex-1">
                         <div class="flex justify-between items-center">
-                            <span class="text-sm text-white">Power Consumption</span>
-                            <span class="text-sm font-bold text-green-400">342 kW</span>
+                            <span class="text-sm text-white">Internal App Usage</span>
+                            <span class="text-sm font-bold text-green-400">2.4K</span>
                         </div>
                         <div class="flex items-center gap-3 mt-1">
                             <span class="text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-300">Normal</span>
@@ -769,24 +654,23 @@
                 </div>
 
                 <div class="metric-indicator">
-                    <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-                        <i class="fas fa-clock text-blue-400"></i>
+                    <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
+                        <i class="fas fa-headset text-red-400"></i>
                     </div>
                     <div class="flex-1">
                         <div class="flex justify-between items-center">
-                            <span class="text-sm text-white">Cycle Time</span>
-                            <span class="text-sm font-bold text-blue-400">4.2 ms</span>
+                            <span class="text-sm text-white">Helpdesk Tickets</span>
+                            <span class="text-sm font-bold text-red-400">156</span>
                         </div>
                         <div class="flex items-center gap-3 mt-1">
-                            <span class="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300">Stable</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-300">Elevated</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- GNN Analysis -->
-            <div
-                class="mt-5 p-4 bg-gradient-to-br from-purple-500/10 to-[#FFD700]/10 rounded-xl border border-[#FFD700]/20">
+            <div class="mt-5 p-4 bg-gradient-to-br from-purple-500/10 to-[#a855f7]/10 rounded-xl border border-[#a855f7]/20">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
                         <i class="fas fa-brain text-purple-400"></i>
@@ -795,10 +679,10 @@
                         <span class="text-sm font-semibold text-white">GNN Root Cause Analysis</span>
                     </div>
                 </div>
-                <div class="text-xs text-slate-300 mb-3">Primary anomaly: Temperature spike in core processor</div>
+                <div class="text-xs text-slate-300 mb-3">Primary anomaly: Helpdesk ticket surge from remote employees</div>
                 <div class="flex flex-wrap items-center gap-2">
-                    <span class="text-xs px-3 py-1.5 rounded-full bg-purple-500/30 text-purple-300">SHAP: 0.91</span>
-                    <span class="text-xs px-3 py-1.5 rounded-full bg-blue-500/30 text-blue-300">LIME: 0.88</span>
+                    <span class="text-xs px-3 py-1.5 rounded-full bg-purple-500/30 text-purple-300">SHAP: 0.86</span>
+                    <span class="text-xs px-3 py-1.5 rounded-full bg-blue-500/30 text-blue-300">LIME: 0.91</span>
                 </div>
             </div>
         </div>
@@ -809,45 +693,43 @@
 
         <!-- TOP SECTION: Network Graph -->
         <div class="top-section" id="top-section">
-
+            
             <!-- Orbital rings -->
             <div class="orbital-ring-extra"></div>
             <div class="orbital-ring"></div>
             <div class="orbital-ring-inner"></div>
-
-            <!-- Finance Primary Node -->
-            <div class="node-finance-primary" id="finance-primary">
+            
+            <!-- HR Primary Node -->
+            <div class="node-hr-primary" id="hr-primary">
                 <div class="text-center">
-                    <div class="text-sm font-extrabold text-white tracking-wider mb-1">FINANCE ERP</div>
+                    <div class="text-sm font-extrabold text-white tracking-wider mb-1">HUMAN RESOURCES</div>
                     <div class="text-xs font-medium text-white/70">PRIMARY HUB</div>
                 </div>
-                <div
-                    class="absolute -top-3 -right-3 w-5 h-5 bg-[#FFD700] rounded-full border-2 border-white/40 animate-pulse">
-                </div>
+                <div class="absolute -top-3 -right-3 w-5 h-5 bg-[#a855f7] rounded-full border-2 border-white/40 animate-pulse"></div>
             </div>
 
-            <!-- Sensor Metric Nodes - 90° açı ile (4 metrik) -->
-            <!-- Sensor Temperature - Critical (45°) -->
-            <div class="metric-node sensor-temp" id="metric-temp"
-                style="left: calc(50% - 55px + 230px * 0.707); top: calc(50% - 55px + 230px * 0.707);">
-                <i class="fas fa-temperature-high text-2xl text-red-400 mb-1"></i>
-                <span class="text-sm font-bold text-white">TEMP</span>
-                <span class="text-xs text-red-400">78°C</span>
-
+            <!-- HR Metric Nodes - 120° açı ile (3 metrik) -->
+            <!-- Login/Logout Count - Active (90°) -->
+            <div class="metric-node login-logout" id="metric-login" 
+                 style="left: calc(50% - 65px + 250px * 0); top: calc(50% - 65px + 250px * -1);">
+                <i class="fas fa-right-to-bracket text-2xl text-blue-400 mb-1"></i>
+                <span class="text-sm font-bold text-white">LOGIN</span>
+                <span class="text-xs text-blue-400">847</span>
+                
                 <!-- Tooltip -->
                 <div class="tooltip-premium">
                     <div class="flex justify-between items-center mb-3">
-                        <span class="text-sm font-bold text-white">Sensor Temperature</span>
-                        <span class="text-xs px-3 py-1 rounded-full bg-red-500/30 text-red-300">CRITICAL</span>
+                        <span class="text-sm font-bold text-white">Login/Logout Count</span>
+                        <span class="text-xs px-3 py-1 rounded-full bg-blue-500/30 text-blue-300">ACTIVE</span>
                     </div>
                     <div class="space-y-3">
                         <div class="flex justify-between text-xs">
                             <span class="text-slate-400">Current:</span>
-                            <span class="text-white font-medium">78°C</span>
+                            <span class="text-white font-medium">847 events</span>
                         </div>
                         <div class="flex justify-between text-xs">
-                            <span class="text-slate-400">Threshold:</span>
-                            <span class="text-white font-medium">75°C</span>
+                            <span class="text-slate-400">Daily Avg:</span>
+                            <span class="text-white font-medium">820</span>
                         </div>
                         <div class="flex justify-between text-xs">
                             <span class="text-slate-400">Updated:</span>
@@ -855,37 +737,34 @@
                         </div>
                         <div class="flex items-center gap-2 text-xs">
                             <span class="text-slate-400">Trend:</span>
-                            <i class="fas fa-arrow-up text-red-400"></i>
-                            <span class="text-red-400 font-medium">+3.2°C</span>
+                            <i class="fas fa-arrow-up text-blue-400"></i>
+                            <span class="text-blue-400 font-medium">+3.2%</span>
                         </div>
-                    </div>
-                    <div class="mt-3 pt-3 border-t border-white/10">
-                        <div class="text-[10px] text-slate-500">Recommendation: Check cooling system</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Vibration Level - Warning (135°) -->
-            <div class="metric-node vibration" id="metric-vibration"
-                style="left: calc(50% - 55px + 230px * -0.707); top: calc(50% - 55px + 230px * 0.707);">
-                <i class="fas fa-wave-square text-2xl text-purple-400 mb-1"></i>
-                <span class="text-sm font-bold text-white">VIB</span>
-                <span class="text-xs text-purple-400">2.4</span>
-
+            <!-- Internal App Usage - Normal (210°) -->
+            <div class="metric-node app-usage" id="metric-app" 
+                 style="left: calc(50% - 65px + 250px * -0.866); top: calc(50% - 65px + 250px * 0.5);">
+                <i class="fas fa-laptop text-2xl text-green-400 mb-1"></i>
+                <span class="text-sm font-bold text-white">APPS</span>
+                <span class="text-xs text-green-400">2.4K</span>
+                
                 <!-- Tooltip -->
                 <div class="tooltip-premium">
                     <div class="flex justify-between items-center mb-3">
-                        <span class="text-sm font-bold text-white">Vibration Level</span>
-                        <span class="text-xs px-3 py-1 rounded-full bg-purple-500/30 text-purple-300">WARNING</span>
+                        <span class="text-sm font-bold text-white">Internal App Usage</span>
+                        <span class="text-xs px-3 py-1 rounded-full bg-green-500/30 text-green-300">NORMAL</span>
                     </div>
                     <div class="space-y-3">
                         <div class="flex justify-between text-xs">
                             <span class="text-slate-400">Current:</span>
-                            <span class="text-white font-medium">2.4 mm/s</span>
+                            <span class="text-white font-medium">2,435 sessions</span>
                         </div>
                         <div class="flex justify-between text-xs">
-                            <span class="text-slate-400">Threshold:</span>
-                            <span class="text-white font-medium">2.0 mm/s</span>
+                            <span class="text-slate-400">Daily Avg:</span>
+                            <span class="text-white font-medium">2,200</span>
                         </div>
                         <div class="flex justify-between text-xs">
                             <span class="text-slate-400">Updated:</span>
@@ -893,79 +772,47 @@
                         </div>
                         <div class="flex items-center gap-2 text-xs">
                             <span class="text-slate-400">Trend:</span>
-                            <i class="fas fa-arrow-up text-purple-400"></i>
-                            <span class="text-purple-400 font-medium">+0.3 mm/s</span>
+                            <i class="fas fa-arrow-up text-green-400"></i>
+                            <span class="text-green-400 font-medium">+5.1%</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Power Consumption - Normal (225°) -->
-            <div class="metric-node power" id="metric-power"
-                style="left: calc(50% - 55px + 230px * -0.707); top: calc(50% - 55px + 230px * -0.707);">
-                <i class="fas fa-bolt text-2xl text-green-400 mb-1"></i>
-                <span class="text-sm font-bold text-white">POWER</span>
-                <span class="text-xs text-green-400">342</span>
-
+            <!-- Helpdesk Tickets - Elevated (330°) -->
+            <div class="metric-node helpdesk" id="metric-helpdesk" 
+                 style="left: calc(50% - 65px + 250px * 0.866); top: calc(50% - 65px + 250px * 0.5);">
+                <i class="fas fa-headset text-2xl text-red-400 mb-1"></i>
+                <span class="text-sm font-bold text-white">TICKETS</span>
+                <span class="text-xs text-red-400">156</span>
+                
                 <!-- Tooltip -->
                 <div class="tooltip-premium">
                     <div class="flex justify-between items-center mb-3">
-                        <span class="text-sm font-bold text-white">Power Consumption</span>
-                        <span class="text-xs px-3 py-1 rounded-full bg-green-500/30 text-green-300">NORMAL</span>
+                        <span class="text-sm font-bold text-white">Helpdesk Tickets</span>
+                        <span class="text-xs px-3 py-1 rounded-full bg-red-500/30 text-red-300">ELEVATED</span>
                     </div>
                     <div class="space-y-3">
                         <div class="flex justify-between text-xs">
                             <span class="text-slate-400">Current:</span>
-                            <span class="text-white font-medium">342 kW</span>
+                            <span class="text-white font-medium">156 open</span>
                         </div>
                         <div class="flex justify-between text-xs">
                             <span class="text-slate-400">Threshold:</span>
-                            <span class="text-white font-medium">400 kW</span>
+                            <span class="text-white font-medium">120</span>
                         </div>
                         <div class="flex justify-between text-xs">
                             <span class="text-slate-400">Updated:</span>
-                            <span class="text-white font-medium">6s ago</span>
+                            <span class="text-white font-medium">1s ago</span>
                         </div>
                         <div class="flex items-center gap-2 text-xs">
                             <span class="text-slate-400">Trend:</span>
-                            <i class="fas fa-arrow-down text-green-400"></i>
-                            <span class="text-green-400 font-medium">-12 kW</span>
+                            <i class="fas fa-arrow-up text-red-400"></i>
+                            <span class="text-red-400 font-medium">+18%</span>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Cycle Time - Stable (315°) -->
-            <div class="metric-node cycle" id="metric-cycle"
-                style="left: calc(50% - 55px + 230px * 0.707); top: calc(50% - 55px + 230px * -0.707);">
-                <i class="fas fa-clock text-2xl text-blue-400 mb-1"></i>
-                <span class="text-sm font-bold text-white">CYCLE</span>
-                <span class="text-xs text-blue-400">4.2</span>
-
-                <!-- Tooltip -->
-                <div class="tooltip-premium">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="text-sm font-bold text-white">Cycle Time</span>
-                        <span class="text-xs px-3 py-1 rounded-full bg-blue-500/30 text-blue-300">STABLE</span>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="flex justify-between text-xs">
-                            <span class="text-slate-400">Current:</span>
-                            <span class="text-white font-medium">4.2 ms</span>
-                        </div>
-                        <div class="flex justify-between text-xs">
-                            <span class="text-slate-400">Threshold:</span>
-                            <span class="text-white font-medium">5.0 ms</span>
-                        </div>
-                        <div class="flex justify-between text-xs">
-                            <span class="text-slate-400">Updated:</span>
-                            <span class="text-white font-medium">3s ago</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-xs">
-                            <span class="text-slate-400">Trend:</span>
-                            <i class="fas fa-arrow-down text-blue-400"></i>
-                            <span class="text-blue-400 font-medium">-0.1 ms</span>
-                        </div>
+                    <div class="mt-3 pt-3 border-t border-white/10">
+                        <div class="text-[10px] text-slate-500">Recommendation: Review IT support staffing</div>
                     </div>
                 </div>
             </div>
@@ -975,11 +822,10 @@
             <div id="particle-container" class="absolute inset-0 pointer-events-none" style="z-index: 25;"></div>
 
             <!-- Scroll Indicator -->
-            <div class="scroll-indicator"
-                onclick="document.getElementById('main-container').scrollTo({top: window.innerHeight, behavior: 'smooth'})">
-                <i class="fas fa-chart-line text-[#FFD700]"></i>
-                <span>View Sensor Analytics</span>
-                <i class="fas fa-chevron-down text-[#FFD700]"></i>
+            <div class="scroll-indicator" onclick="document.getElementById('main-container').scrollTo({top: window.innerHeight, behavior: 'smooth'})">
+                <i class="fas fa-chart-line text-[#a855f7]"></i>
+                <span>View HR Analytics</span>
+                <i class="fas fa-chevron-down text-[#a855f7]"></i>
             </div>
         </div>
 
@@ -987,103 +833,87 @@
         <div class="bottom-section">
             <!-- Section Title -->
             <div class="flex items-center gap-4 mb-8">
-                <div class="w-1 h-12 bg-[#FFD700] rounded-full"></div>
+                <div class="w-1 h-12 bg-[#a855f7] rounded-full"></div>
                 <div>
-                    <h1 class="text-3xl font-bold text-white">Finance ERP Sensor Analytics</h1>
-                    <p class="text-sm text-slate-400 mt-1">Real-time sensor metrics · Last 24 hours</p>
+                    <h1 class="text-3xl font-bold text-white">HR Analytics Dashboard</h1>
+                    <p class="text-sm text-slate-400 mt-1">Real-time employee metrics · Last 24 hours</p>
                 </div>
                 <div class="flex-1"></div>
                 <div class="glass-premium-light px-4 py-2 flex items-center gap-2">
-                    <i class="fas fa-sync-alt text-[#FFD700] text-sm"></i>
+                    <i class="fas fa-sync-alt text-[#a855f7] text-sm"></i>
                     <span class="text-sm text-white">Live</span>
-                    <div class="w-2 h-2 rounded-full bg-[#FFD700] animate-pulse ml-2"></div>
+                    <div class="w-2 h-2 rounded-full bg-[#a855f7] animate-pulse ml-2"></div>
                 </div>
             </div>
 
-            <!-- Row 1: 2 Charts - Sensor Temperature & Vibration -->
+            <!-- Row 1: 3 Charts - Ana Metrikler -->
             <div class="charts-grid">
-                <!-- Temperature Chart -->
+                <!-- Login/Logout Chart -->
                 <div class="chart-card">
                     <div class="chart-title">
-                        <i class="fas fa-temperature-high text-red-400"></i>
-                        Sensor Temperature Trend
-                        <span class="text-xs bg-red-500/20 text-red-300 px-2 py-1 rounded-full ml-auto">Critical</span>
+                        <i class="fas fa-right-to-bracket text-blue-400"></i>
+                        Login/Logout Activity
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full ml-auto">Active</span>
                     </div>
-                    <div class="chart-subtitle">Last 24 hours · Avg 72°C · Peak 78°C</div>
-                    <div id="chart-temp" style="width: 100%; height: 200px;"></div>
+                    <div class="chart-subtitle">Last 24 hours · Avg 820 · Peak 892</div>
+                    <div id="chart-login" style="width: 100%; height: 180px;"></div>
                 </div>
 
-                <!-- Vibration Level Chart -->
+                <!-- Internal App Usage Chart -->
                 <div class="chart-card">
                     <div class="chart-title">
-                        <i class="fas fa-wave-square text-purple-400"></i>
-                        Vibration Level
-                        <span
-                            class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded-full ml-auto">Warning</span>
+                        <i class="fas fa-laptop text-green-400"></i>
+                        Internal App Usage
+                        <span class="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded-full ml-auto">Normal</span>
                     </div>
-                    <div class="chart-subtitle">Last 24 hours · Avg 2.1 mm/s · Peak 2.4 mm/s</div>
-                    <div id="chart-vibration" style="width: 100%; height: 200px;"></div>
-                </div>
-            </div>
-
-            <!-- Row 2: 2 Charts - Power Consumption & Cycle Time -->
-            <div class="charts-grid">
-                <!-- Power Consumption Chart -->
-                <div class="chart-card">
-                    <div class="chart-title">
-                        <i class="fas fa-bolt text-green-400"></i>
-                        Power Consumption
-                        <span
-                            class="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded-full ml-auto">Normal</span>
-                    </div>
-                    <div class="chart-subtitle">Last 24 hours · Avg 335 kW · Peak 342 kW</div>
-                    <div id="chart-power" style="width: 100%; height: 200px;"></div>
+                    <div class="chart-subtitle">Last 24 hours · Avg 2.3K · Peak 2.6K</div>
+                    <div id="chart-app" style="width: 100%; height: 180px;"></div>
                 </div>
 
-                <!-- Cycle Time Chart -->
+                <!-- Helpdesk Tickets Chart -->
                 <div class="chart-card">
                     <div class="chart-title">
-                        <i class="fas fa-clock text-blue-400"></i>
-                        Cycle Time
-                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full ml-auto">Stable</span>
+                        <i class="fas fa-headset text-red-400"></i>
+                        Helpdesk Tickets
+                        <span class="text-xs bg-red-500/20 text-red-300 px-2 py-1 rounded-full ml-auto">Elevated</span>
                     </div>
-                    <div class="chart-subtitle">Last 24 hours · Avg 4.1 ms · Peak 4.2 ms</div>
-                    <div id="chart-cycle" style="width: 100%; height: 200px;"></div>
+                    <div class="chart-subtitle">Last 24 hours · Avg 128 · Peak 168</div>
+                    <div id="chart-helpdesk" style="width: 100%; height: 180px;"></div>
                 </div>
             </div>
 
-            <!-- Row 3: 2 Wide Charts - Correlation Analysis -->
+            <!-- Row 2: 2 Wide Charts - Korelasyon Analizi -->
             <div class="charts-grid-wide">
-                <!-- Temperature vs Power Correlation -->
+                <!-- Usage vs Tickets Correlation -->
                 <div class="chart-card">
                     <div class="chart-title">
                         <i class="fas fa-chart-scatter text-purple-400"></i>
-                        Temp vs Power Correlation
+                        App Usage vs Ticket Correlation
                     </div>
-                    <div class="chart-subtitle">Last 24 hours · Correlation coefficient: 0.78</div>
+                    <div class="chart-subtitle">Last 24 hours · Korelasyon katsayısı: 0.58</div>
                     <div id="chart-correlation" style="width: 100%; height: 220px;"></div>
                 </div>
 
-                <!-- Sensor Health Heatmap -->
+                <!-- Employee Activity Heatmap -->
                 <div class="chart-card">
                     <div class="chart-title">
                         <i class="fas fa-th text-orange-400"></i>
-                        Sensor Health Heatmap
+                        Employee Activity Heatmap
                     </div>
-                    <div class="chart-subtitle">Hourly sensor status · Last 7 days</div>
+                    <div class="chart-subtitle">Hourly activity by department · Last 7 days</div>
                     <div id="chart-heatmap" style="width: 100%; height: 220px;"></div>
                 </div>
             </div>
 
-            <!-- Row 4: 2 Wide Charts - Distribution & Forecast -->
+            <!-- Row 3: 2 Wide Charts - Distribution & Forecast -->
             <div class="charts-grid-wide mt-6">
-                <!-- Sensor Distribution (Donut) -->
+                <!-- Ticket Categories (Donut) -->
                 <div class="chart-card">
                     <div class="chart-title">
                         <i class="fas fa-chart-pie text-pink-400"></i>
-                        Sensor Alert Distribution
+                        Ticket Categories
                     </div>
-                    <div class="chart-subtitle">Critical 15% · Warning 25% · Normal 60%</div>
+                    <div class="chart-subtitle">IT 42% · HR 28% · Facilities 18% · Other 12%</div>
                     <div id="chart-distribution" style="width: 100%; height: 200px;"></div>
                 </div>
 
@@ -1091,10 +921,33 @@
                 <div class="chart-card">
                     <div class="chart-title">
                         <i class="fas fa-chart-line text-cyan-400"></i>
-                        Temperature Forecast
+                        Ticket Volume Forecast
                     </div>
                     <div class="chart-subtitle">Next 2 hours prediction · +2h forecast</div>
                     <div id="chart-forecast" style="width: 100%; height: 200px;"></div>
+                </div>
+            </div>
+
+            <!-- Row 4: 2 Wide Charts - Detaylı Analiz -->
+            <div class="charts-grid-wide mt-6">
+                <!-- Peak Hours Analysis -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-bar text-indigo-400"></i>
+                        Peak Hours Analysis
+                    </div>
+                    <div class="chart-subtitle">Login peak: 09:00-10:00 · Logout peak: 17:00-18:00</div>
+                    <div id="chart-hourly" style="width: 100%; height: 200px;"></div>
+                </div>
+
+                <!-- App Usage by Department -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-pie text-amber-400"></i>
+                        App Usage by Department
+                    </div>
+                    <div class="chart-subtitle">Engineering 38% · Sales 24% · HR 18% · Other 20%</div>
+                    <div id="chart-department" style="width: 100%; height: 200px;"></div>
                 </div>
             </div>
 
@@ -1102,8 +955,8 @@
             <div class="flex justify-between items-center mt-8 text-xs text-slate-500">
                 <span>Last updated: 15:24:07 UTC · Auto-refresh every 30s</span>
                 <span class="flex items-center gap-2">
-                    <i class="fas fa-circle text-[#FFD700] text-[6px]"></i>
-                    Sensor data stream active
+                    <i class="fas fa-circle text-[#a855f7] text-[6px]"></i>
+                    HR data stream active
                 </span>
             </div>
         </div>
@@ -1111,12 +964,12 @@
 
     <!-- Time Indicator (fixed) -->
     <div class="time-indicator">
-        <i class="fas fa-clock text-[#FFD700] text-lg"></i>
+        <i class="fas fa-clock text-[#a855f7] text-lg"></i>
         <span class="text-base font-semibold text-white">15:24:07 UTC</span>
         <div class="h-6 w-px bg-white/20"></div>
         <div class="flex items-center gap-3">
             <span class="text-sm text-slate-300">Live</span>
-            <div class="w-3 h-3 rounded-full bg-[#FFD700] animate-pulse"></div>
+            <div class="w-3 h-3 rounded-full bg-[#a855f7] animate-pulse"></div>
         </div>
         <div class="h-6 w-px bg-white/20"></div>
         <i class="fas fa-history text-slate-400 text-lg"></i>
@@ -1131,7 +984,7 @@
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-
+        
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
@@ -1143,17 +996,17 @@
             const radius = 30 + Math.random() * 20;
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos((Math.random() * 2) - 1);
-
+            
             posArray[i] = radius * Math.sin(phi) * Math.cos(theta);
-            posArray[i + 1] = radius * Math.sin(phi) * Math.sin(theta) * 0.4;
-            posArray[i + 2] = radius * Math.cos(phi);
+            posArray[i+1] = radius * Math.sin(phi) * Math.sin(theta) * 0.4;
+            posArray[i+2] = radius * Math.cos(phi);
         }
 
         particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
 
         const particlesMaterial = new THREE.PointsMaterial({
             size: 0.15,
-            color: '#FFD700',
+            color: '#a855f7',
             transparent: true,
             opacity: 0.25,
             blending: THREE.AdditiveBlending
@@ -1193,33 +1046,33 @@
             const container = document.getElementById('connection-lines');
             if (!container) return;
             container.innerHTML = '';
-
-            const financeNode = document.getElementById('finance-primary');
-            const metrics = ['metric-temp', 'metric-vibration', 'metric-power', 'metric-cycle'];
-
-            const financeRect = financeNode.getBoundingClientRect();
-            const financeCenter = { x: financeRect.left + financeRect.width / 2, y: financeRect.top + financeRect.height / 2 };
-
+            
+            const hrNode = document.getElementById('hr-primary');
+            const metrics = ['metric-login', 'metric-app', 'metric-helpdesk'];
+            
+            const hrRect = hrNode.getBoundingClientRect();
+            const hrCenter = { x: hrRect.left + hrRect.width / 2, y: hrRect.top + hrRect.height / 2 };
+            
             metrics.forEach(id => {
                 const metric = document.getElementById(id);
                 if (!metric) return;
-
+                
                 const metricRect = metric.getBoundingClientRect();
                 const metricCenter = { x: metricRect.left + metricRect.width / 2, y: metricRect.top + metricRect.height / 2 };
-
+                
                 const line = document.createElement('div');
                 line.className = 'connection-line';
-
-                const dx = metricCenter.x - financeCenter.x;
-                const dy = metricCenter.y - financeCenter.y;
+                
+                const dx = metricCenter.x - hrCenter.x;
+                const dy = metricCenter.y - hrCenter.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-
+                
                 line.style.width = distance + 'px';
-                line.style.left = financeCenter.x + 'px';
-                line.style.top = financeCenter.y + 'px';
+                line.style.left = hrCenter.x + 'px';
+                line.style.top = hrCenter.y + 'px';
                 line.style.transform = `rotate(${angle}deg)`;
-
+                
                 container.appendChild(line);
             });
         }
@@ -1231,7 +1084,7 @@
         function createDataParticles() {
             const container = document.getElementById('particle-container');
             if (!container) return;
-
+            
             setInterval(() => {
                 for (let i = 0; i < 10; i++) {
                     setTimeout(() => {
@@ -1368,7 +1221,7 @@
                 .attr("width", width)
                 .attr("height", height)
                 .append("g")
-                .attr("transform", `translate(${width / 2},${height / 2})`);
+                .attr("transform", `translate(${width/2},${height/2})`);
 
             const pie = d3.pie().value(d => d.value);
             const arc = d3.arc().innerRadius(radius * 0.6).outerRadius(radius);
@@ -1385,8 +1238,8 @@
                 .attr("stroke-width", 1)
                 .attr("filter", "drop-shadow(0 0 8px currentColor)")
                 .style("transition", "all 0.3s")
-                .on("mouseenter", function () { d3.select(this).attr("transform", "scale(1.02)"); })
-                .on("mouseleave", function () { d3.select(this).attr("transform", "scale(1)"); });
+                .on("mouseenter", function() { d3.select(this).attr("transform", "scale(1.02)"); })
+                .on("mouseleave", function() { d3.select(this).attr("transform", "scale(1)"); });
         }
 
         // Draw heatmap
@@ -1405,15 +1258,13 @@
                 .attr("width", width)
                 .attr("height", height);
 
-            for (let i = 0; i < 4; i++) { // 4 sensors
+            const departments = ["Engineering", "Sales", "HR", "Finance", "Operations"];
+            
+            for (let i = 0; i < 5; i++) { // 5 departments
                 for (let j = 0; j < 24; j++) { // 24 hours
                     const value = Math.random();
-                    let color;
-                    if (i === 0) color = d3.interpolateRgb("#ef4444", "#facc15")(value); // temp
-                    else if (i === 1) color = d3.interpolateRgb("#a855f7", "#3b82f6")(value); // vibration
-                    else if (i === 2) color = d3.interpolateRgb("#22c55e", "#facc15")(value); // power
-                    else color = d3.interpolateRgb("#3b82f6", "#22c55e")(value); // cycle
-
+                    const color = d3.interpolateRgb("#a855f7", "#facc15")(value);
+                    
                     svg.append("rect")
                         .attr("x", j * cellSize + 40)
                         .attr("y", i * cellSize + 20)
@@ -1427,15 +1278,14 @@
                 }
             }
 
-            // Sensor labels
-            const sensors = ["Temp", "Vib", "Power", "Cycle"];
-            sensors.forEach((sensor, i) => {
+            // Department labels
+            departments.forEach((dept, i) => {
                 svg.append("text")
                     .attr("x", 5)
                     .attr("y", i * cellSize + 32)
                     .style("fill", "#94a3b8")
                     .style("font-size", "8px")
-                    .text(sensor);
+                    .text(dept.substring(0, 4));
             });
         }
 
@@ -1458,29 +1308,29 @@
             // Generate random correlation data
             const data = [];
             for (let i = 0; i < 50; i++) {
-                const temp = 60 + Math.random() * 30;
-                const power = 300 + (temp - 60) * 2 + (Math.random() - 0.5) * 20;
-                data.push({ temp, power });
+                const usage = 1500 + Math.random() * 1500;
+                const tickets = 80 + (usage / 50) + (Math.random() - 0.5) * 40;
+                data.push({ usage, tickets });
             }
 
             const x = d3.scaleLinear()
-                .domain([55, 95])
+                .domain([1000, 3000])
                 .range([margin.left, width - margin.right]);
 
             const y = d3.scaleLinear()
-                .domain([280, 380])
+                .domain([50, 200])
                 .range([height - margin.bottom, margin.top]);
 
             // Axis
             svg.append("g")
                 .attr("transform", `translate(0,${height - margin.bottom})`)
-                .call(d3.axisBottom(x).ticks(5).tickFormat(d => d + "°C"))
+                .call(d3.axisBottom(x).ticks(5).tickFormat(d => (d/1000) + 'K'))
                 .style("color", "#94a3b8")
                 .style("font-size", "8px");
 
             svg.append("g")
                 .attr("transform", `translate(${margin.left},0)`)
-                .call(d3.axisLeft(y).ticks(5).tickFormat(d => d + "kW"))
+                .call(d3.axisLeft(y).ticks(5))
                 .style("color", "#94a3b8")
                 .style("font-size", "8px");
 
@@ -1489,46 +1339,123 @@
                 .data(data)
                 .enter()
                 .append("circle")
-                .attr("cx", d => x(d.temp))
-                .attr("cy", d => y(d.power))
+                .attr("cx", d => x(d.usage))
+                .attr("cy", d => y(d.tickets))
                 .attr("r", 4)
-                .attr("fill", "#FFD700")
+                .attr("fill", "#a855f7")
                 .attr("opacity", 0.7)
                 .attr("stroke", "white")
                 .attr("stroke-width", 1)
-                .attr("filter", "drop-shadow(0 0 4px #FFD700)");
+                .attr("filter", "drop-shadow(0 0 4px #a855f7)");
+        }
+
+        // Draw bar chart for hourly pattern
+        function drawBarChart(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            const margin = { top: 10, right: 10, bottom: 20, left: 30 };
+
+            d3.select(container).selectAll("*").remove();
+
+            const svg = d3.select(container)
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+            const loginData = [25, 18, 12, 8, 5, 3, 8, 45, 82, 68, 52, 48, 55, 62, 58, 48, 52, 68, 72, 58, 42, 35, 28, 22];
+            const logoutData = [8, 5, 3, 2, 2, 1, 4, 12, 18, 22, 28, 32, 35, 38, 42, 48, 52, 58, 62, 68, 72, 58, 42, 28];
+            
+            const x = d3.scaleBand()
+                .domain(d3.range(24))
+                .range([margin.left, width - margin.right])
+                .padding(0.1);
+
+            const y = d3.scaleLinear()
+                .domain([0, 100])
+                .range([height - margin.bottom, margin.top]);
+
+            // Login bars (blue)
+            svg.selectAll(".bar-login")
+                .data(loginData)
+                .enter()
+                .append("rect")
+                .attr("x", (d, i) => x(i))
+                .attr("y", d => y(d))
+                .attr("width", x.bandwidth() / 2 - 1)
+                .attr("height", d => height - margin.bottom - y(d))
+                .attr("fill", "#3b82f6")
+                .attr("opacity", 0.7)
+                .attr("rx", 2)
+                .attr("filter", "drop-shadow(0 0 4px #3b82f6)");
+
+            // Logout bars (purple)
+            svg.selectAll(".bar-logout")
+                .data(logoutData)
+                .enter()
+                .append("rect")
+                .attr("x", (d, i) => x(i) + x.bandwidth() / 2 + 1)
+                .attr("y", d => y(d))
+                .attr("width", x.bandwidth() / 2 - 1)
+                .attr("height", d => height - margin.bottom - y(d))
+                .attr("fill", "#a855f7")
+                .attr("opacity", 0.7)
+                .attr("rx", 2)
+                .attr("filter", "drop-shadow(0 0 4px #a855f7)");
+
+            // Axis
+            svg.append("g")
+                .attr("transform", `translate(0,${height - margin.bottom})`)
+                .call(d3.axisBottom(x).ticks(6).tickFormat(d => d + 'h'))
+                .style("color", "#94a3b8")
+                .style("font-size", "8px");
+
+            // Legend
+            svg.append("text").attr("x", width - 100).attr("y", 15).attr("fill", "#3b82f6").style("font-size", "8px").text("● Login");
+            svg.append("text").attr("x", width - 100).attr("y", 25).attr("fill", "#a855f7").style("font-size", "8px").text("● Logout");
         }
 
         // Initialize all charts
         setTimeout(() => {
-            // Temperature Chart (red)
-            drawLineChart('chart-temp', generateTimeSeriesData(24, 65, 78, 0.2), '#ef4444', true, '°C');
-
-            // Vibration Chart (purple)
-            drawLineChart('chart-vibration', generateTimeSeriesData(24, 1.8, 2.4, 0.15), '#a855f7', true, ' mm/s');
-
-            // Power Chart (green)
-            drawLineChart('chart-power', generateTimeSeriesData(24, 320, 342, 0.1), '#22c55e', true, ' kW');
-
-            // Cycle Time Chart (blue)
-            drawLineChart('chart-cycle', generateTimeSeriesData(24, 4.0, 4.2, 0.05), '#3b82f6', true, ' ms');
-
+            // Login Chart (blue)
+            drawLineChart('chart-login', generateTimeSeriesData(24, 750, 892, 0.08), '#3b82f6', true, '');
+            
+            // App Usage Chart (green)
+            drawLineChart('chart-app', generateTimeSeriesData(24, 2000, 2600, 0.1), '#22c55e', true, '');
+            
+            // Helpdesk Chart (red)
+            drawLineChart('chart-helpdesk', generateTimeSeriesData(24, 110, 168, 0.12), '#ef4444', true, '');
+            
             // Correlation Chart
             drawScatterPlot('chart-correlation');
-
+            
             // Heatmap
             drawHeatmap('chart-heatmap');
-
-            // Distribution Donut
+            
+            // Ticket Categories Donut
             drawDonutChart('chart-distribution', [
-                { label: 'Critical', value: 15 },
-                { label: 'Warning', value: 25 },
-                { label: 'Normal', value: 60 }
-            ], ['#ef4444', '#facc15', '#22c55e']);
-
+                { label: 'IT', value: 42 },
+                { label: 'HR', value: 28 },
+                { label: 'Facilities', value: 18 },
+                { label: 'Other', value: 12 }
+            ], ['#3b82f6', '#a855f7', '#f97316', '#94a3b8']);
+            
             // Forecast Chart
-            drawLineChart('chart-forecast', generateTimeSeriesData(8, 72, 78, 0.1), '#06b6d4', true, '°C');
-
+            drawLineChart('chart-forecast', generateTimeSeriesData(8, 130, 165, 0.1), '#06b6d4', true, '');
+            
+            // Hourly Pattern
+            drawBarChart('chart-hourly');
+            
+            // Department Usage Donut
+            drawDonutChart('chart-department', [
+                { label: 'Engineering', value: 38 },
+                { label: 'Sales', value: 24 },
+                { label: 'HR', value: 18 },
+                { label: 'Other', value: 20 }
+            ], ['#22c55e', '#3b82f6', '#a855f7', '#f97316']);
+            
         }, 200);
 
         // Update charts on resize
@@ -1539,5 +1466,4 @@
         });
     </script>
 </body>
-
 </html>
